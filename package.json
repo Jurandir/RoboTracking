@@ -1,15 +1,20 @@
 {
   "name": "itrack",
   "version": "1.0.0",
-  "description": "Bot de Envio de Track para clientes",
-  "main": "index.js",
+  "description": "Bot de Envio de ocorrências para para clientes iTrack",
+  "main": "webhook.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ."
   },
   "author": "Jurandir Ferreira",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.4.0",
+    "crypto": "^1.0.1",
+    "date-fns": "^2.16.1",
+    "date-fns-tz": "^1.0.12",
     "dotenv": "^8.2.0",
+    "fs": "0.0.1-security",
     "mssql": "^6.2.1"
   },
   "devDependencies": {

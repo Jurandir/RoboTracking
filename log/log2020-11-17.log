@@ -1,0 +1,8 @@
+2020-11-17T17:37:21 - MSG - Startup serviço
+2020-11-17T17:37:22 - ERRO - {"erro":"DB ERRO - Invalid object name 'CLIENTES'. : SQL => [ SELECT TOP 1 * FROM CLIENTES WHERE CNPJ_CLI='62136304'\r\n ]","rotina":"getCliente","sql":"SELECT TOP 1 * FROM CLIENTES WHERE CNPJ_CLI='62136304'\r\n"}
+2020-11-17T17:42:44 - MSG - Startup serviço
+2020-11-17T17:45:09 - MSG - Startup serviço
+2020-11-17T17:47:12 - MSG - Startup serviço
+2020-11-17T17:49:07 - MSG - Startup serviço
+2020-11-17T17:50:46 - MSG - Startup serviço
+2020-11-17T17:50:46 - AVISO - Setup cliente (Não Configurado.)

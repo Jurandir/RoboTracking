@@ -6,11 +6,21 @@ const ambiente     = process.env.URL_PRODUCAO || 'Test'
 
 const getToken = async () => {
     let servidor = (ambiente=='Producion') ? utl_producao : url_teste
-    let dados = await loadAPI('POST','/User/Login',servidor,login ) 
-    if (dados.isErr==false) {
-        return { token: dados.data.token, err: null }
+    let ret = await loadAPI('POST','/User/Login',servidor,login ) 
+    if (ret.isErr==false) {
+        let success = ret.dados.success
+        let id = -1
+        let token = null
+        if (success==true) {
+           id = ret.dados.data.id
+           token = ret.dados.data.token   
+        }
+        return { success: ret.dados.success,
+                 id: id, 
+                 token: token, 
+                 err: null }
     } else {
-        return { token: null , err: dados.err}
+        return { success: false, id: -1, token: null , err: ret.err}
     }
 }
 

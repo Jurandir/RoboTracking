@@ -10,7 +10,8 @@ INSERT INTO [dbo].[CLIENTES]
            ,[URL_OCORRENCIA_SIMPLIFICADA]
            ,[URL_OCORRENCIA_CLIENTE]
            ,[URL_EVIDENCIAR_OCORRENCIA]
-           ,[CHAVE_PUBLICA])
+           ,[CHAVE_PUBLICA]
+           ,[REF_LAYOUT])
      VALUES
            ('62136304'
            ,''
@@ -20,6 +21,7 @@ INSERT INTO [dbo].[CLIENTES]
            ,''
            ,''
            ,''
-           ,'')
+           ,''
+           ,2)
 
 GO

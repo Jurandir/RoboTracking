@@ -11,10 +11,10 @@ const loadAPI = async (method,endpoint,server,params) => {
         if (method=='POST') {
             ret = await axios.post( url, params, config )
         } else {
-            ret = await axios.get( url, params, config )
+            ret = await axios.get( url, { params }, config )
         }   
 
-        return { dados : ret.data, isErr: false, isAxiosError: ret.isAxiosError }
+        return { dados : ret.data, isErr: false, isAxiosError: ret.isAxiosError || false }
 
     } catch (err) { 
 

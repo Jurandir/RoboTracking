@@ -1,0 +1,9 @@
+2020-11-23T17:45:10 - MSG - Startup serviço
+2020-11-23T17:45:10 - AVISO - Setup cliente 62136304
+2020-11-23T17:45:13 - INFO - Sucesso - Logado na API (true,3907,Production)
+2020-11-23T17:45:18 - AVISO - Notas Fiscais - Incluidas (2)
+2020-11-23T17:45:23 - AVISO - Ocorrências Iniciais - Incluidas (2)
+2020-11-23T17:45:23 - SUCESSO - (Validação) - Carga: 29823958, NF: 0046557, Danfe: 35201162136304003820550010000465571934788850, OK.
+2020-11-23T17:45:25 - AVISO - Registro de novos manifestos - (2)
+2020-11-23T17:45:25 - SUCESSO - (Validação) - Carga: 29823947, NF: 0046538, Danfe: 35201162136304003820550010000465381911360506, OK.
+2020-11-23T17:45:26 - AVISO - Manifestos - Ocorrências de saída - (2)

@@ -1,4 +1,4 @@
-//-- Versão Atual   em ( 17/11/2020 ) 
+//-- Versão Atual   em ( 23/11/2020 ) 
 //-- By: Jurandir Ferreira
 const colors = require('colors')
 
@@ -12,17 +12,18 @@ const registraManifestoNF             = require('./controllers/registraManifesto
 const atualizaDataManifestoNF         = require('./controllers/atualizaDataManifestoNF')
 const atualizaDataBaixaManifestoNF    = require('./controllers/atualizaDataBaixaManifestoNF')
 const geraOcorrenciaChegadaFilDestino = require('./controllers/geraOcorrenciaChegadaFilDestino')
+const geraOcorrenciasIniciais         = require('./controllers/geraOcorrenciasIniciais')
 const geraOcorrenciaSaidaDoCD         = require('./controllers/geraOcorrenciaSaidaDoCD')
+const geraOcorrenciasTMS              = require('./controllers/geraOcorrenciasTMS')
 const getNFsNaoValidadas              = require('./controllers/getNFsNaoValidadas')
 const getCargaAPIitrack               = require('./controllers/getCargaAPIitrack')
-const geraOcorrenciasIniciais         = require('./controllers/geraOcorrenciasIniciais')
 const getToken                        = require('./controllers/getToken')
 const sendLog                         = require('./helpers/sendLog')
 
 
 const check_time                 = process.env.CHECK_TIME      || 10000   // mseg 
 const time_evidencias            = process.env.TIME_EVIDENCIAS || 1800000 // mseg 
-const node_env                   = process.env.NODE_ENV        || 'Test' 
+const node_env                   = process.env.NODE_ENV        || 'Test'  // Production / Developer 
 
 let sucesso                              = false
 let id                                   = 0
@@ -33,12 +34,14 @@ let ocorrenciasIniciaisIncluidas         = 0
 let novosManifestosRegistrados           = 0
 let novasOcorrenciaSaidaDoCD             = 0
 let novasOcorrenciaChegadaFilial         = 0
+let novosOcorrenciasTMS                  = 0
 let x_botCheckNovasNFs                   = 0
 let x_botGeraOcorrenciasIniciais         = 0
 let x_botGetNFsNaoValidadas              = 0
 let x_botRegistraManifestoNF             = 0
 let x_botGeraOcorrenciaSaidaDoCD         = 0
 let x_botGeraOcorrenciaChegadaFilDestino = 0
+let x_botGeraOcorrenciasTMS              = 0
 
 // Tela inicial
 process.stdout.write('\x1B[2J\x1B[0f')
@@ -64,7 +67,7 @@ getCliente().then((dados)=>{
 function displayStatistics() {  
    let params = {
       checks: ++checks,
-      notasfiscais: x_botCheckNovasNFs,
+      notasfiscais: x_botCheckNovasNFs || 0,
       validadas: x_botGetNFsNaoValidadas,
       ocorrencias: x_botGeraOcorrenciasIniciais
    }
@@ -148,6 +151,19 @@ async function botGeraOcorrenciaChegadaFilDestino() {
    setTimeout(botGeraOcorrenciaChegadaFilDestino,check_time)
 }
 
+// Gera Ocorrências do CARGAS TMS
+async function botGeraOcorrenciasTMS() {
+   geraOcorrenciasTMS().then((ret)=>{
+      if(ret.rowsAffected>0){
+         novosOcorrenciasTMS++
+         sendLog('AVISO',`Novos registros de ocorrencias no TMS - (${ret.rowsAffected})`)
+      }
+      x_botGeraOcorrenciasTMS +=  ret.rowsAffected
+   })      
+   setTimeout(geraOcorrenciasTMS,check_time)
+}
+
+
 // Valida na API a NF para o destinatario
 async function botGetNFsNaoValidadas() {
    getNFsNaoValidadas().then((notas)=>{
@@ -184,11 +200,12 @@ async function botGetNFsNaoValidadas() {
 
 // Monitor de ocorrências - disparo inicial dos Bot´s
 async function monitorarOcorrencias() {
-      botCheckNovasNFs()
-      botGeraOcorrenciasIniciais()
-      botGetNFsNaoValidadas()
-      botRegistraManifestoNF()
-      botGeraOcorrenciaSaidaDoCD()
-      botGeraOcorrenciaChegadaFilDestino()
+      botCheckNovasNFs()                     // NOTASFISCAIS_INICIADAS_JOB_INSERT.sql
+      botGeraOcorrenciasIniciais()           // TRACKING_INICIAL_JOB_INSERT.sql
+      botGetNFsNaoValidadas()                // NOTASFISCAIS_NAO_VALIDADAS.sql  &&  UPDATE_CARGA_NF.sql
+      botRegistraManifestoNF()               // UPDATE_MANIFESTO_NF.sql
+      botGeraOcorrenciaSaidaDoCD()           // OCORRENCIA_SAIDA_DO_CD.sql  &&  UPDATE_DATA_MANIFESTO_NF.sql
+      botGeraOcorrenciaChegadaFilDestino()   // OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
+      botGeraOcorrenciasTMS()                // OCORRENCIAS_CARGAS.sql
       displayStatistics()
 }

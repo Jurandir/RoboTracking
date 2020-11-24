@@ -1,9 +1,9 @@
-const sqlQuery      = require('../connection/sqlQuery')
-const sendLog       = require('../helpers/sendLog')
+const sqlQuery      = require('../../connection/sqlQuery')
+const sendLog       = require('../../helpers/sendLog')
 
 const fs            = require('fs')
 const path          = require('path')
-const sqlFileName   =  path.join(__dirname, '../sql/consultas/CLIENTE.SQL');
+const sqlFileName   =  path.join(__dirname, '../../sql/consultas/CLIENTE.SQL');
 
 var sqlCliente = fs.readFileSync(sqlFileName, "utf8");
 

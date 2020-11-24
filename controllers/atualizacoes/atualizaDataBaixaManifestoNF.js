@@ -1,13 +1,13 @@
-const sqlExec       = require('../connection/sqlExec')
-const sendLog       = require('../helpers/sendLog')
+const sqlExec       = require('../../connection/sqlExec')
+const sendLog       = require('../../helpers/sendLog')
 
 const fs            = require('fs')
 const path          = require('path')
-const sqlFileName   =  path.join(__dirname, '../sql/rotinas/OCORRENCIA_SAIDA_DO_CD.sql')
+const sqlFileName   =  path.join(__dirname, '../../sql/rotinas/UPDATE_DATA_BAIXA_NF.sql')
 
 var sqlRegistraMan = fs.readFileSync(sqlFileName, "utf8")
 
-async function geraOcorrenciaSaidaDoCD() {    
+async function atualizaDataBaixaManifestoNF() {    
     let dados = {}
 
     let sql = sqlRegistraMan
@@ -22,10 +22,10 @@ async function geraOcorrenciaSaidaDoCD() {
         return result
   
     } catch (err) {
-        dados = { "erro" : err.message, "rotina" : "geraOcorrenciaSaidaDoCD", "sql" : sql, rowsAffected: -1 }
+        dados = { "erro" : err.message, "rotina" : "atualizaDataBaixaManifestoNF", "sql" : sql, rowsAffected: -1 }
         sendLog('ERRO', JSON.stringify(dados) )
         return dados
     } 
 }
 
-module.exports = geraOcorrenciaSaidaDoCD
+module.exports = atualizaDataBaixaManifestoNF

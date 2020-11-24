@@ -1,9 +1,9 @@
-const sqlExec       = require('../connection/sqlExec')
-const sendLog       = require('../helpers/sendLog')
+const sqlExec       = require('../../connection/sqlExec')
+const sendLog       = require('../../helpers/sendLog')
 
 const fs            = require('fs')
 const path          = require('path')
-const sqlFileName   =  path.join(__dirname, '../sql/rotinas/OCORRENCIAS_CARGAS.sql')
+const sqlFileName   =  path.join(__dirname, '../../sql/rotinas/OCORRENCIAS_CARGAS.sql')
 
 var sqlOcorrTMS = fs.readFileSync(sqlFileName, "utf8")
 

@@ -1,5 +1,5 @@
-const loadAPI = require('../services/loadAPI')
-const querystring = require('querystring')
+const loadAPI = require('../../services/loadAPI')
+// const querystring = require('querystring')
 
 const method = 'GET'
 const endpoint = '/User/CargaSimples'

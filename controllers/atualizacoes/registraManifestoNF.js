@@ -1,9 +1,9 @@
-const sqlExec       = require('../connection/sqlExec')
-const sendLog       = require('../helpers/sendLog')
+const sqlExec       = require('../../connection/sqlExec')
+const sendLog       = require('../../helpers/sendLog')
 
 const fs            = require('fs')
 const path          = require('path')
-const sqlFileName   =  path.join(__dirname, '../sql/rotinas/UPDATE_MANIFESTO_NF.sql')
+const sqlFileName   =  path.join(__dirname, '../../sql/rotinas/UPDATE_MANIFESTO_NF.sql')
 
 var sqlRegistraMan = fs.readFileSync(sqlFileName, "utf8")
 

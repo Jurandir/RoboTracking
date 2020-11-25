@@ -1,18 +1,14 @@
 const sqlExec       = require('../../connection/sqlExec')
 const sendLog       = require('../../helpers/sendLog')
 
+const fs            = require('fs')
+const path          = require('path')
+const sqlFileName   =  path.join(__dirname, '../../sql/consultas/UPDATE_EVIDENCIA_NF.sql');
+
 async function gravaRegistroEvidencias(evidencia) {    
     let dados = {}
+    let sql = eval('`'+sqlFileName+'`');
 
-    let sql = `UPDATE CONHECIMENTO
-                 SET COMPROVANTE_ENVIADO = ${evidencia.enviado},
-                     COMPROVANTE_ORIGEM  = '${evidencia.origem}',
-                     DT_ENVIO            = CURRENT_TIMESTAMP, 
-                     QTDE_LOAD           = QTDE_LOAD + ${evidencia.load},
-                     QTDE_SEND           = QTDE_SEND + ${evidencia.send},
-                     PROTOCOLO           = '${evidencia.protocolo}'
-                WHERE
-                     DOCUMENTO = '${evidencia.documento}' `
     try {
         result = await sqlExec(sql)       
 

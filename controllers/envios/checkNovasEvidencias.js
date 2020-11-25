@@ -1,17 +1,16 @@
-const easydocs                = require('./checkImagemEasyDocs')
-const getEvidencias           = require('./getEvidencias')
-const gravaRegistroEvidencias = require('./gravaRegistroEvidencias')
+const easydocs                = require('../comprovantes/checkImagemEasyDocs')
+const gravaRegistroEvidencias = require('../comprovantes/gravaRegistroEvidencias')
+const getEvidencias           = require('../loads/getEvidencias')
 const enviaEvidencias         = require('../../services/enviaEvidencias')
 const sendLog                 = require('../../helpers/sendLog')
 
-async function checkNovasEvidencias() {  
+async function checkNovasEvidencias(token) {  
     let ret   = { rowsAffected: 0, qtdeSucesso: 0,msg: '', isErr: false  }   
-    let dados = await getEvidencias()
-    let ultimo_doc
+    // let ultimo_doc
 
-    function gravaEvidenciasLoad_OK(documento){
+    function gravaEvidenciasLoad_OK(danfe){
         let params = {
-            documento: documento,
+            danfe: danfe,
             enviado: 0,
             origem: 'EASYDOCS',
             load: 1,
@@ -20,9 +19,9 @@ async function checkNovasEvidencias() {
         }
         gravaRegistroEvidencias(params)
     }
-    function gravaEvidenciasSend_OK( documento, protocolo ){
+    function gravaEvidenciasSend_OK( danfe, protocolo ){
         let params = {
-            documento: documento,
+            danfe: danfe,
             enviado: 1,
             origem: 'EASYDOCS',
             load: 0,
@@ -31,6 +30,8 @@ async function checkNovasEvidencias() {
         }
         gravaRegistroEvidencias(params)
     }
+
+    let dados = await getEvidencias()
     
     if (dados.erro) {
         ret.isErr = true
@@ -53,7 +54,7 @@ async function checkNovasEvidencias() {
             } else
             if (evidencia.ok==true){
                 ret.qtdeSucesso++
-                let resposta     = await enviaEvidencias( element, evidencia.imagem )
+                let resposta     = await enviaEvidencias( token, element.IDCARGA, evidencia.imagem )
                 try {
                     isErr        = resposta.isErr
                     isAxiosError = resposta.isAxiosError || false

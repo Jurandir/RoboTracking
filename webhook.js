@@ -8,12 +8,14 @@ const displayDados                    = require('./helpers/displayDados')
 const getCliente                      = require('./controllers/loads/getCliente')
 const checkNovasNFs                   = require('./controllers/atualizacoes/checkNovasNFs')
 const registraCargaNF                 = require('./controllers/atualizacoes/registraCargaNF')
+const checkNovasEvidencias            = require('./controllers/envios/checkNovasEvidencias')
 const registraManifestoNF             = require('./controllers/atualizacoes/registraManifestoNF')
 const atualizaDataManifestoNF         = require('./controllers/atualizacoes/atualizaDataManifestoNF')
 const atualizaDataBaixaManifestoNF    = require('./controllers/atualizacoes/atualizaDataBaixaManifestoNF')
 const geraOcorrenciaChegadaFilDestino = require('./controllers/eventos/geraOcorrenciaChegadaFilDestino')
 const geraOcorrenciasIniciais         = require('./controllers/eventos/geraOcorrenciasIniciais')
 const geraOcorrenciaSaidaDoCD         = require('./controllers/eventos/geraOcorrenciaSaidaDoCD')
+const checkEnviaOcorrencias           = require('./controllers/envios/checkEnviaOcorrencias')
 const geraOcorrenciasTMS              = require('./controllers/eventos/geraOcorrenciasTMS')
 const getNFsNaoValidadas              = require('./controllers/loads/getNFsNaoValidadas')
 const getCargaAPIitrack               = require('./controllers/loads/getCargaAPIitrack')
@@ -33,8 +35,10 @@ let notasFiscaisIncluidas                = 0
 let ocorrenciasIniciaisIncluidas         = 0
 let novosManifestosRegistrados           = 0
 let novasOcorrenciaSaidaDoCD             = 0
+let ocorrenciasTracking                  = 0
 let novasOcorrenciaChegadaFilial         = 0
 let novosOcorrenciasTMS                  = 0
+let novosComprovantesEasedocs            = 0
 let x_botCheckNovasNFs                   = 0
 let x_botGeraOcorrenciasIniciais         = 0
 let x_botGetNFsNaoValidadas              = 0
@@ -42,6 +46,8 @@ let x_botRegistraManifestoNF             = 0
 let x_botGeraOcorrenciaSaidaDoCD         = 0
 let x_botGeraOcorrenciaChegadaFilDestino = 0
 let x_botGeraOcorrenciasTMS              = 0
+let x_botCheckNovasEvidencias            = 0
+let x_botCheckEnviaOcorrencias           = 0
 
 // Tela inicial
 process.stdout.write('\x1B[2J\x1B[0f')
@@ -160,9 +166,33 @@ async function botGeraOcorrenciasTMS() {
       }
       x_botGeraOcorrenciasTMS +=  ret.rowsAffected
    })      
-   setTimeout(geraOcorrenciasTMS,check_time)
+   setTimeout(botGeraOcorrenciasTMS,check_time)
 }
 
+// Checa existencia de comprovantes na Easydocs
+async function botCheckNovasEvidencias() {
+   checkNovasEvidencias(token).then((ret)=>{
+      if(ret.rowsAffected>0){
+         novosComprovantesEasedocs++
+         sendLog('AVISO',`Solicitado comprovantes na Easydocs - (${ret.rowsAffected})`)
+      }
+      x_botCheckNovasEvidencias +=  ret.rowsAffected
+   })      
+   setTimeout(botCheckNovasEvidencias,time_evidencias)
+}
+
+
+// Envia ocorrencias de TRACKING
+async function botCheckEnviaOcorrencias() {
+   checkEnviaOcorrencias(token).then((ret)=>{
+      if(ret.rowsAffected>0){
+         ocorrenciasTracking++
+         sendLog('AVISO',`Ocorrencias de tracking para enviar - (${ret.rowsAffected})`)
+      }
+      x_botCheckEnviaOcorrencias +=  ret.rowsAffected
+   })      
+   setTimeout(botCheckEnviaOcorrencias,check_time)
+}
 
 // Valida na API a NF para o destinatario
 async function botGetNFsNaoValidadas() {
@@ -207,5 +237,7 @@ async function monitorarOcorrencias() {
       botGeraOcorrenciaSaidaDoCD()           // OCORRENCIA_SAIDA_DO_CD.sql  &&  UPDATE_DATA_MANIFESTO_NF.sql
       botGeraOcorrenciaChegadaFilDestino()   // OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
       botGeraOcorrenciasTMS()                // OCORRENCIAS_CARGAS.sql
+      botCheckNovasEvidencias()              // COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      botCheckEnviaOcorrencias()
       displayStatistics()
 }

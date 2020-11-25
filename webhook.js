@@ -184,7 +184,7 @@ async function botCheckNovasEvidencias() {
 
 // Envia ocorrencias de TRACKING
 async function botCheckEnviaOcorrencias() {
-   checkEnviaOcorrencias(token).then((ret)=>{
+   checkEnviaOcorrencias(id,token).then((ret)=>{
       if(ret.rowsAffected>0){
          ocorrenciasTracking++
          sendLog('AVISO',`Ocorrencias de tracking para enviar - (${ret.rowsAffected})`)

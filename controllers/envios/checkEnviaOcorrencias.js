@@ -1,10 +1,14 @@
 const getOcorrencias          = require('../loads/getOcorrencias')
 const enviaOcorrencias        = require('../../services/enviaOcorrencias')
+const ocorrencia              = require('../../models/ocorrencia')
 const sendLog                 = require('../../helpers/sendLog')
 
-
-const checkEnviaOcorrencias = async (token) => {
-    let ret   = { rowsAffected: 0, qtdeSucesso: 0,msg: '', isErr: false  }   
+const checkEnviaOcorrencias = async (id,token) => {
+    let ret   = { rowsAffected: 0, qtdeSucesso: 0,msg: '', isErr: false  }
+    let envio = ocorrencia
+    
+    envio.token = token
+    envio.content.idResponsavelFk = id
 
     function gravaEnvio(danfe) {
         let params = {
@@ -43,22 +47,21 @@ const checkEnviaOcorrencias = async (token) => {
             let resultado    = {Mensagem:'Sem resposta',Protocolo:'[IMAGEM]',Sucesso:false}
             let isErr        = true
             let isAxiosError = true
-
-            let resposta     = await enviaOcorrencias( token, element )
             
-            /*
-            {
-                "success": true,
-                "message": "string",
-                "data": true,
-                "code": 0
-            }
-            */  
+            envio.content.danfe             = element.DANFE
+            envio.content.idCargaFk         = element.IDCARGA
+            envio.content.dataOcorrencia    = element.DT_OCORRENCIA
+            envio.content.idOcorrenciaPk    = element.ID_OCORRENCIA
+            envio.content.descricao         = element.OBSERVACAO
+            envio.content.idTrackingCliente = element.ID
+            envio.content.nroNotaFiscal     = element.NRONOTAFISCAL
 
+            let resposta     = await enviaOcorrencias( token, envio )
+        
             try {
                 isErr        = resposta.isErr
                 isAxiosError = resposta.isAxiosError || false
-                resultado    = resposta.dados.EvidenciaOcorrenciaResult
+                resultado    = resposta.dados
                 gravaEnvio(element.DANFE)
             } catch (err) {
                 isErr = true
@@ -67,12 +70,12 @@ const checkEnviaOcorrencias = async (token) => {
 
             if (isAxiosError==true) { 
                 sendLog('ERRO',`Envio p/API-DOC:${element.DOCUMENTO} - (Axios ERRO)` ) 
-            } else if ( resultado.Sucesso == false ) { 
-                gravaEnvioResultado(element.DANFE), mensagem, 0)
-                sendLog('WARNING',`Envio p/API-DOC: ${element.DOCUMENTO} - Ret API: ${resultado.Mensagem} - Prot: ${resultado.Protocolo}`)
-            } else if ( resultado.Sucesso == true ) { 
-                gravaEnvioResultado(element.DANFE), mensagem, 1)
-                sendLog('SUCESSO',`Envio p/API-DOC: ${element.DOCUMENTO} - Ret API: ${resultado.Mensagem} - Prot: ${resultado.Protocolo}`)
+            } else if ( resultado.success == false ) { 
+                gravaEnvioResultado(element.DANFE, resultado.message, 0)
+                sendLog('WARNING',`Envio p/API-DOC: ${element.DOCUMENTO} - Ret API: ${resultado.message} - Prot: ${resultado.code}`)
+            } else if ( resultado.success == true ) { 
+                gravaEnvioResultado(element.DANFE, resultado.message, 1)
+                sendLog('SUCESSO',`Envio p/API-DOC: ${element.DOCUMENTO} - Ret API: ${resultado.message} - Prot: ${resultado.code}`)
             } else {
                 sendLog('ALERTA',`Envio p/API-DOC: ${element.DOCUMENTO} - (Sem retorno)`)
             }

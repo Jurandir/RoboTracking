@@ -46,6 +46,7 @@ async function checkNovasEvidencias(token) {
             let resultado    = {Mensagem:'Sem resposta',Protocolo:'[IMAGEM]',Sucesso:false}
             let isErr        = true
             let isAxiosError = true
+            let textErro     = ''
 
             evidencia = await easydocs(element.DOCUMENTO)
 
@@ -58,34 +59,31 @@ async function checkNovasEvidencias(token) {
                 try {
                     isErr        = resposta.isErr
                     isAxiosError = resposta.isAxiosError || false
-                    resultado    = resposta.dados.EvidenciaOcorrenciaResult
-                    gravaEvidenciasLoad_OK(element.DOCUMENTO)
+                    resultado    = resposta.dados  //
+                    gravaEvidenciasLoad_OK(element.DANFE)
                 } catch (err) {
                     isErr = true
-                    sendLog('WARNING',`Envio p/API-DOC:${element.DOCUMENTO} - (Sem Resposta)` )
+                    sendLog('ERRO',`UPD - EVIDÊNCIA - DOC: ${element.DOCUMENTO} - (${element.DANFE})` )
                 }
     
                 if (isAxiosError==true) { 
-                    sendLog('ERRO',`Envio p/API-DOC:${element.DOCUMENTO} - (Axios ERRO)` ) 
-                } else if ( resultado.Sucesso == false ) { 
-                    sendLog('WARNING',`Envio p/API-DOC: ${element.DOCUMENTO} - Ret API: ${resultado.Mensagem} - Prot: ${resultado.Protocolo}`)
-                } else if ( resultado.Sucesso == true ) { 
-                    gravaEvidenciasSend_OK(element.DOCUMENTO, resultado.Protocolo)
-                    sendLog('SUCESSO',`Envio p/API-DOC: ${element.DOCUMENTO} - Ret API: ${resultado.Mensagem} - Prot: ${resultado.Protocolo}`)
+                    textErro = resposta.err.response.status+' - '+resposta.err.response.statusText
+                    sendLog('AVISO',`Envio IMAGEM - DANFE: ${element.DANFE} - (STATUS: ${textErro})` ) 
+                } else if ( resultado.success == false ) { 
+                    sendLog('WARNING',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
+                } else if ( resultado.success == true ) { 
+                    gravaEvidenciasSend_OK(element.DANFE, resultado.code)
+                    sendLog('SUCESSO',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
                 } else {
-                    sendLog('ALERTA',`Envio p/API-DOC: ${element.DOCUMENTO} - (Sem retorno)`)
+                    sendLog('ALERTA',`Envio IMAGEM - DANFE: ${element.DANFE} - (Sem retorno)`)
                 }
     
             } 
         })
         await Promise.all(promises)
     }
-    
     await getTodos()
-    
     return ret   
-    
-    
 }
 
 module.exports = checkNovasEvidencias

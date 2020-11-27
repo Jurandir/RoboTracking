@@ -7,7 +7,7 @@ const sqlFileName   =  path.join(__dirname, '../../sql/rotinas/UPDATE_TRACKING.s
 
 var sqlUpdTrk = fs.readFileSync(sqlFileName, "utf8")
 
-async function atualizaTracking(danfe,idcarga) {    
+async function atualizaTracking(params) {    
     let dados = {}
     let sql = eval('`'+sqlUpdTrk+'`');
  

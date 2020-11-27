@@ -2,6 +2,7 @@ const getOcorrencias          = require('../loads/getOcorrencias')
 const enviaOcorrencias        = require('../../services/enviaOcorrencias')
 const ocorrencia              = require('../../models/ocorrencia')
 const sendLog                 = require('../../helpers/sendLog')
+const atualizaTracking        = require('../atualizacoes/atualizaTracking')
 
 const checkEnviaOcorrencias = async (id,token) => {
     let ret   = { rowsAffected: 0, qtdeSucesso: 0,msg: '', isErr: false  }
@@ -47,17 +48,19 @@ const checkEnviaOcorrencias = async (id,token) => {
             let resultado    = {Mensagem:'Sem resposta',Protocolo:'[IMAGEM]',Sucesso:false}
             let isErr        = true
             let isAxiosError = true
+            let textErro     = ''
             
             envio.content.danfe             = element.DANFE
-            envio.content.idCargaFk         = element.IDCARGA
+            envio.content.idCargaFk         = element.IDCARGA || 0
             envio.content.dataOcorrencia    = element.DT_OCORRENCIA
             envio.content.idOcorrenciaPk    = element.ID_OCORRENCIA
             envio.content.descricao         = element.OBSERVACAO
             envio.content.idTrackingCliente = element.ID
             envio.content.nroNotaFiscal     = element.NRONOTAFISCAL
+            envio.token                     = token 
 
-            let resposta     = await enviaOcorrencias( token, envio )
-        
+            let resposta     = await enviaOcorrencias( envio )
+            
             try {
                 isErr        = resposta.isErr
                 isAxiosError = resposta.isAxiosError || false
@@ -65,19 +68,20 @@ const checkEnviaOcorrencias = async (id,token) => {
                 gravaEnvio(element.DANFE)
             } catch (err) {
                 isErr = true
-                sendLog('WARNING',`Envio p/API-DOC:${element.DOCUMENTO} - (Sem Resposta)` )
+                sendLog('ERRO',`Atualização de TRACKING:${element.DANFE} - ID:${ element.ID}.` )
             }
 
             if (isAxiosError==true) { 
-                sendLog('ERRO',`Envio p/API-DOC:${element.DOCUMENTO} - (Axios ERRO)` ) 
+                textErro = resposta.err.response.status+' - '+resposta.err.response.statusText
+                sendLog('ERRO',`Envio TRACKING: ${element.DANFE} - (STATUS: "${textErro}" ) ID:${ element.ID} - API Carga: ${element.IDCARGA}` ) 
             } else if ( resultado.success == false ) { 
                 gravaEnvioResultado(element.DANFE, resultado.message, 0)
-                sendLog('WARNING',`Envio p/API-DOC: ${element.DOCUMENTO} - Ret API: ${resultado.message} - Prot: ${resultado.code}`)
+                sendLog('WARNING',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - Prot: ${resultado.code} - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
             } else if ( resultado.success == true ) { 
                 gravaEnvioResultado(element.DANFE, resultado.message, 1)
-                sendLog('SUCESSO',`Envio p/API-DOC: ${element.DOCUMENTO} - Ret API: ${resultado.message} - Prot: ${resultado.code}`)
+                sendLog('SUCESSO',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - Prot: ${resultado.code} - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
             } else {
-                sendLog('ALERTA',`Envio p/API-DOC: ${element.DOCUMENTO} - (Sem retorno)`)
+                sendLog('ALERTA',`Envio TRACKING: ${element.DANFE} - (Sem retorno) - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
             }
 
         })

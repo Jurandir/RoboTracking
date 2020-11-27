@@ -9,7 +9,8 @@ SELECT
 FROM CARGASSQL.dbo.CNH
     JOIN CARGASSQL.dbo.NFR               ON NFR.EMP_CODIGO     = CNH.EMP_CODIGO	AND 
 	                                        NFR.CNH_SERIE      = CNH.SERIE	AND 
-											NFR.CNH_CTRC       = CNH.CTRC			
+											NFR.CNH_CTRC       = CNH.CTRC AND
+											CNH.NF LIKE ('%'+NFR.NF+'%')
     JOIN CARGASSQL.dbo.CTE               ON CTE.EMP_CODIGO_CNH = CNH.EMP_CODIGO	AND 
 	                                        CTE.CNH_SERIE      = CNH.SERIE	AND 
 											CTE.CNH_CTRC       = CNH.CTRC											
@@ -18,6 +19,7 @@ FROM CARGASSQL.dbo.CNH
 											CLI.CNPJ_CLI   = SUBSTRING(CNH.CLI_CGCCPF_DEST,1,8) OR
 											CLI.CNPJ_CLI   = SUBSTRING(CNH.CLI_CGCCPF_REMET,1,8) )
 	LEFT JOIN SIC.dbo.NOTAFISCAL NFE     ON NFE.DANFE      = NFR.CHAVENFE
-WHERE CNH.DATATU BETWEEN (CURRENT_TIMESTAMP-7) AND (CURRENT_TIMESTAMP+0) 
+	                                        
+WHERE CNH.DATATU BETWEEN (CURRENT_TIMESTAMP-100) AND (CURRENT_TIMESTAMP-35)  --- CORRIGIR para ficar na data atual
 AND CTE.PROTOCOLOCTE IS NOT NULL
 AND NFE.DT_ATUAL IS NULL

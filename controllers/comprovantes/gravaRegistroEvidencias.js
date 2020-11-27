@@ -3,11 +3,14 @@ const sendLog       = require('../../helpers/sendLog')
 
 const fs            = require('fs')
 const path          = require('path')
-const sqlFileName   =  path.join(__dirname, '../../sql/consultas/UPDATE_EVIDENCIA_NF.sql');
+const sqlFileName   =  path.join(__dirname, '../../sql/rotinas/UPDATE_EVIDENCIA_NF.sql');
+
+var sqlEvidencias = fs.readFileSync(sqlFileName, "utf8")
+
 
 async function gravaRegistroEvidencias(evidencia) {    
     let dados = {}
-    let sql = eval('`'+sqlFileName+'`');
+    let sql = eval('`'+sqlEvidencias+'`');
 
     try {
         result = await sqlExec(sql)       

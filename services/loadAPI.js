@@ -2,6 +2,12 @@ const axios         = require('axios')
 const sendLog       = require('../helpers/sendLog')
 
 const loadAPI = async (method,endpoint,server,params) => {
+
+    //console.log('method:',method)
+    //console.log('endpoint:',endpoint)
+    //console.log('server:',server)
+    //console.log('params:',params)
+
     const config = {
         headers: { "Content-Type": 'application/json' }
     }
@@ -18,8 +24,8 @@ const loadAPI = async (method,endpoint,server,params) => {
 
     } catch (err) { 
 
-        dados = {err, isErr: true, url: url, isAxiosError: true } 
-        sendLog('ERRO', JSON.stringify(dados) )
+        dados = {url: url, err ,Err: true, isAxiosError: true } 
+        sendLog('ERRO', 'loadAPI: '+JSON.stringify(dados).substr(0,250) )
         return dados
     }
 }

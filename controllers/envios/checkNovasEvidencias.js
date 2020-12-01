@@ -1,4 +1,5 @@
 const easydocs                = require('../comprovantes/checkImagemEasyDocs')
+const agileprocess            = require('../comprovantes/checkImagemAgileProcess')
 const gravaRegistroEvidencias = require('../comprovantes/gravaRegistroEvidencias')
 const getEvidencias           = require('../loads/getEvidencias')
 const enviaEvidencias         = require('../../services/enviaEvidencias')
@@ -8,22 +9,22 @@ async function checkNovasEvidencias(token) {
     let ret   = { rowsAffected: 0, qtdeSucesso: 0,msg: '', isErr: false  }   
     // let ultimo_doc
 
-    function gravaEvidenciasLoad_OK(danfe){
+    function gravaEvidenciasLoad_OK(danfe,origem){
         let params = {
             danfe: danfe,
             enviado: 0,
-            origem: 'EASYDOCS',
+            origem: origem,
             load: 1,
             send: 0,
             protocolo: '',
         }
         gravaRegistroEvidencias(params)
     }
-    function gravaEvidenciasSend_OK( danfe, protocolo ){
+    function gravaEvidenciasSend_OK( danfe, protocolo, origem ){
         let params = {
             danfe: danfe,
             enviado: 1,
-            origem: 'EASYDOCS',
+            origem: origem,
             load: 0,
             send: 1,
             protocolo: protocolo,
@@ -47,20 +48,27 @@ async function checkNovasEvidencias(token) {
             let isErr        = true
             let isAxiosError = true
             let textErro     = ''
+            let origem       = 'EASYDOCS'
 
             evidencia = await easydocs(element.DOCUMENTO)
-
+            
             if (evidencia.ok==false){
                 sendLog('WARNING',`EasyDocs DOC:${element.DOCUMENTO} - (Não achou a imagem solicitada)` )
+                origem       = 'AGILEPROCESS'
+                evidencia    = await agileprocess(element.DOCUMENTO)
+            } 
+
+            if (evidencia.ok==false){
+                sendLog('WARNING',`AgileProcess DOC:${element.DOCUMENTO} - (Não achou a imagem solicitada)` )
             } else
             if (evidencia.ok==true){
                 ret.qtdeSucesso++
-                let resposta     = await enviaEvidencias( token, element.IDCARGA, evidencia.imagem )
+                let resposta     = await enviaEvidencias( token, element, evidencia.imagem )
                 try {
                     isErr        = resposta.isErr
                     isAxiosError = resposta.isAxiosError || false
                     resultado    = resposta.dados  //
-                    gravaEvidenciasLoad_OK(element.DANFE)
+                    gravaEvidenciasLoad_OK(element.DANFE, origem)
                 } catch (err) {
                     isErr = true
                     sendLog('ERRO',`UPD - EVIDÊNCIA - DOC: ${element.DOCUMENTO} - (${element.DANFE})` )
@@ -72,7 +80,7 @@ async function checkNovasEvidencias(token) {
                 } else if ( resultado.success == false ) { 
                     sendLog('WARNING',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
                 } else if ( resultado.success == true ) { 
-                    gravaEvidenciasSend_OK(element.DANFE, resultado.code)
+                    gravaEvidenciasSend_OK(element.DANFE, resultado.code, origem)
                     sendLog('SUCESSO',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
                 } else {
                     sendLog('ALERTA',`Envio IMAGEM - DANFE: ${element.DANFE} - (Sem retorno)`)

@@ -3,6 +3,7 @@ const enviaOcorrencias        = require('../../services/enviaOcorrencias')
 const ocorrencia              = require('../../models/ocorrencia')
 const sendLog                 = require('../../helpers/sendLog')
 const atualizaTracking        = require('../atualizacoes/atualizaTracking')
+const formata_tzOffset        = require('../../helpers/formata_tzOffset')
 
 const checkEnviaOcorrencias = async (id,token) => {
     let ret   = { rowsAffected: 0, qtdeSucesso: 0,msg: '', isErr: false  }
@@ -52,7 +53,7 @@ const checkEnviaOcorrencias = async (id,token) => {
             
             envio.content.danfe             = element.DANFE
             envio.content.idCargaFk         = element.IDCARGA || 0
-            envio.content.dataOcorrencia    = element.DT_OCORRENCIA
+            envio.content.dataOcorrencia    = formata_tzOffset( element.DT_OCORRENCIA )
             envio.content.idOcorrenciaPk    = element.ID_OCORRENCIA
             envio.content.descricao         = element.OBSERVACAO
             envio.content.idTrackingCliente = element.ID

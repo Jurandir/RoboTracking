@@ -2,7 +2,7 @@ const sqlQuery      = require('../../connection/sqlQuery')
 const sendLog       = require('../../helpers/sendLog')
 const fs            = require('fs')
 const path          = require('path')
-const sqlFileName   =  path.join(__dirname, '../../sql/consultas/OCORRENCIAS_PENDENTES.SQL');
+const sqlFileName   =  path.join(__dirname, '../../sql/consultas/COMPROVANTES_PENDENTES.SQL');
 
 var sqlOcorrencias = fs.readFileSync(sqlFileName, "utf8");
 

@@ -15,8 +15,6 @@ async function getNFsNaoValidadas() {
   
         let { Erro } = data
         if (Erro) { 
-
-            console.log('ERRO:',Erro)
             throw new Error(`DB ERRO - ${Erro} : SQL => [ ${sqlGetNFs} ]`)
         }  
                

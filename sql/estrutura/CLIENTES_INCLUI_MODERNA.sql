@@ -25,3 +25,11 @@ INSERT INTO [dbo].[CLIENTES]
            ,2)
 
 GO
+
+-- 27/11/2020
+UPDATE CLIENTES
+SET SERVIDOR = 'https://www.itrackbrasil.com.br/ws',
+    LOGIN = '11552312000710',
+    SENHA = 'TERMACO789'
+WHERE CNPJ_CLI='62136304'
+;

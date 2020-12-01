@@ -1,4 +1,4 @@
-//-- Versão Atual em ( 24/11/2020 ) 
+//-- Versão Atual em ( 01/12/2020 ) 
 //-- By: Jurandir Ferreira
 const colors = require('colors')
 

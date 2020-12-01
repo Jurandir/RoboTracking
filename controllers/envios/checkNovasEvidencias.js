@@ -20,7 +20,7 @@ async function checkNovasEvidencias(token) {
         }
         gravaRegistroEvidencias(params)
     }
-    function gravaEvidenciasSend_OK( danfe, protocolo, origem ){
+    function gravaEvidenciasSend_ERR( danfe, protocolo, origem ){
         let params = {
             danfe: danfe,
             enviado: 1,
@@ -79,8 +79,8 @@ async function checkNovasEvidencias(token) {
                     sendLog('AVISO',`Envio IMAGEM - DANFE: ${element.DANFE} - (STATUS: ${textErro})` ) 
                 } else if ( resultado.success == false ) { 
                     sendLog('WARNING',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
+                    gravaEvidenciasSend_ERR(element.DANFE, resultado.code, origem)
                 } else if ( resultado.success == true ) { 
-                    gravaEvidenciasSend_OK(element.DANFE, resultado.code, origem)
                     sendLog('SUCESSO',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
                 } else {
                     sendLog('ALERTA',`Envio IMAGEM - DANFE: ${element.DANFE} - (Sem retorno)`)

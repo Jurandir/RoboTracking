@@ -27,6 +27,8 @@ const check_time                 = process.env.CHECK_TIME      || 10000   // mse
 const time_evidencias            = process.env.TIME_EVIDENCIAS || 1800000 // mseg 
 const node_env                   = process.env.NODE_ENV        || 'Test'  // Production / Developer 
 
+sendLog('MSG','Startup serviço')
+
 let sucesso                              = false
 let id                                   = 0
 let token                                = ''
@@ -53,8 +55,9 @@ let x_botCheckEnviaOcorrencias           = 0
 process.stdout.write('\x1B[2J\x1B[0f')
 const titulo = '[BOT Ocorrências: iTrack]'.yellow.bgBlue.bold
 console.log(titulo)
-sendLog('MSG','Startup serviço')
+sendLog('INFO',`CHECK TIME REF.: ${check_time/1000} Seg., CHECK DOCS IMAGEM: ${time_evidencias/1000/60} Min.`)
 
+// 00: getCliente()
 // Verifica clientes habilitados
 getCliente().then((dados)=>{
    if (dados.length>0) {
@@ -81,6 +84,7 @@ function displayStatistics() {
    setTimeout(displayStatistics,1000)
 }
 
+// 00: getToken()
 // Obtem o tokem para acesso a API
 getToken().then((ret)=>{
    if ( (ret.err) && (!ret.token) ) {
@@ -95,7 +99,8 @@ getToken().then((ret)=>{
    }
 })
 
-// Inclui na fila se for lançada NF nova cuja o conhecimento esteja autorizado na SEFAZ
+// 01: botCheckNovasNFs() => checkNovasNFs() => (SQL: NOTASFISCAIS_INICIADAS_JOB_INSERT)
+// Inclui na fila se for lançada uma "NF" nova cuja o conhecimento esteja autorizado na SEFAZ
 async function botCheckNovasNFs() {
       checkNovasNFs().then((ret)=>{
          if(ret.rowsAffected>0){
@@ -105,10 +110,11 @@ async function botCheckNovasNFs() {
          x_botCheckNovasNFs += ret.rowsAffected
       })
       ++checks
-      setTimeout(botCheckNovasNFs,check_time)
+      setTimeout(botCheckNovasNFs,(check_time*2)) // (10000*2) = A cada 20 segundos
 }
 
-// Inclui na fila ocorrências iniciais
+// 02: botGeraOcorrenciasIniciais() => geraOcorrenciasIniciais() => (SQL: TRACKING_INICIAL_JOB_INSERT)
+// Inclui ocorrencias iniciais na fila 
 async function botGeraOcorrenciasIniciais() {
       geraOcorrenciasIniciais().then((ret)=>{
          if(ret.rowsAffected>0){
@@ -118,9 +124,10 @@ async function botGeraOcorrenciasIniciais() {
          x_botGeraOcorrenciasIniciais +=  ret.rowsAffected
       })      
       ++checks
-      setTimeout(botGeraOcorrenciasIniciais,check_time)
+      setTimeout(botGeraOcorrenciasIniciais,(check_time*3)) // (10000*3) = A cada 30 segundos
 }
 
+// 04: botRegistraManifestoNF() => registraManifestoNF()
 // Registra Manifesto na NF
 async function botRegistraManifestoNF() {
    registraManifestoNF().then((ret)=>{
@@ -131,10 +138,11 @@ async function botRegistraManifestoNF() {
       x_botRegistraManifestoNF +=  ret.rowsAffected
    })      
    ++checks
-   setTimeout(botRegistraManifestoNF,check_time)
+   setTimeout(botRegistraManifestoNF,(check_time*6)) // (10000*6) = A cada 60 segundos
 }
 
-// Gera ocorrências de saida do CD
+// 05: botGeraOcorrenciaSaidaDoCD() => geraOcorrenciaSaidaDoCD() => atualizaDataManifestoNF()
+// Gera ocorrências de saida do CD (Transferências)
 async function botGeraOcorrenciaSaidaDoCD() {
    await geraOcorrenciaSaidaDoCD().then((ret)=>{
       if(ret.rowsAffected>0){
@@ -148,6 +156,7 @@ async function botGeraOcorrenciaSaidaDoCD() {
    setTimeout(botGeraOcorrenciaSaidaDoCD,check_time)
 }
 
+// 06: botGeraOcorrenciaChegadaFilDestino() => geraOcorrenciaChegadaFilDestino() => atualizaDataBaixaManifestoNF()
 // Gera ocorrências - "CHEGADA NA CIDADE OU FILIAL DE DESTINO"
 async function botGeraOcorrenciaChegadaFilDestino() {
    await geraOcorrenciaChegadaFilDestino().then((ret)=>{
@@ -159,10 +168,11 @@ async function botGeraOcorrenciaChegadaFilDestino() {
    })      
    await atualizaDataBaixaManifestoNF()
    ++checks
-   setTimeout(botGeraOcorrenciaChegadaFilDestino,check_time)
+   setTimeout(botGeraOcorrenciaChegadaFilDestino,(check_time*6)) // (10000*6) = A cada 60 segundos
 }
 
-// Gera Ocorrências do CARGAS TMS
+// 07: botGeraOcorrenciasTMS() => geraOcorrenciasTMS()
+// Checa ocorrências geradas no CARGAS TMS e coloca na fila 
 async function botGeraOcorrenciasTMS() {
    geraOcorrenciasTMS().then((ret)=>{
       if(ret.rowsAffected>0){
@@ -172,10 +182,11 @@ async function botGeraOcorrenciasTMS() {
       x_botGeraOcorrenciasTMS +=  ret.rowsAffected
    })      
    ++checks
-   setTimeout(botGeraOcorrenciasTMS,check_time)
+   setTimeout(botGeraOcorrenciasTMS,(check_time*3)) // (10000*3) = A cada 30 segundos
 }
 
-// Checa existencia de comprovantes na Easydocs
+// 09: botCheckNovasEvidencias() => checkNovasEvidencias() => getEvidencias()
+// Checa existencia de comprovantes na Easydocs ou na AgileProcess
 async function botCheckNovasEvidencias() {
    checkNovasEvidencias(token).then((ret)=>{
       if(ret.rowsAffected>0){
@@ -185,10 +196,11 @@ async function botCheckNovasEvidencias() {
       x_botCheckNovasEvidencias +=  ret.rowsAffected
    })      
    ++checks
-   setTimeout(botCheckNovasEvidencias,time_evidencias)
+   setTimeout(botCheckNovasEvidencias,time_evidencias) // (1800000) = A cada 30 minutos
 }
 
 
+// 08: botCheckEnviaOcorrencias() => checkEnviaOcorrencias() => sqlOcorrencias() => enviaOcorrencias()
 // Envia ocorrencias de TRACKING
 async function botCheckEnviaOcorrencias() {
    checkEnviaOcorrencias(id,token).then((ret)=>{
@@ -199,10 +211,11 @@ async function botCheckEnviaOcorrencias() {
       x_botCheckEnviaOcorrencias +=  ret.rowsAffected
    })      
    ++checks
-   setTimeout(botCheckEnviaOcorrencias,check_time)
+   setTimeout(botCheckEnviaOcorrencias,(check_time*12)) // (10000*12) = A cada 120 segundos
 }
 
-// Valida na API a NF para o destinatario
+// 03: botGetNFsNaoValidadas() => getNFsNaoValidadas() => getCargaAPIitrack() => registraCargaNF()
+// Valida na API a NF para o destinatario e registra id.Carga
 async function botGetNFsNaoValidadas() {
    getNFsNaoValidadas().then((notas)=>{
       if(notas.length==0) {
@@ -213,16 +226,18 @@ async function botGetNFsNaoValidadas() {
          let nroFiscal = nota.NUMERO 
          getCargaAPIitrack(token,cnpj,nroFiscal).then((ret)=>{
             let count        = 0
-            let isAxiosError = true
+            let isAxiosError = false
+            let apiSuccess   = false
 
-            isErr = ret.isErr || true
+            isErr = ret.isErr || false
             if (isErr == false) {
                count          = ret.dados.data.count
+               apiSuccess     = ret.dados.success
                isAxiosError   = ret.isAxiosError
             }
 
             if(( count==0) || (isErr==true) || (isAxiosError==true)) {
-               sendLog('WARNING',`(Validação Falhou) - Destinatário: ${cnpj}, NF: ${nroFiscal}, NÃO OK, Erro: ${isErr},AxiosErro: ${isAxiosError} .`)
+               sendLog('WARNING',`(Validação Falhou) - Destinatário: ${cnpj}, NF: ${nroFiscal}, NÃO OK, Erro: ${isErr},AxiosErro: ${isAxiosError}, API Success: ${apiSuccess}.`)
                registraCargaNF(nota.DANFE,0)
                return
             }
@@ -240,19 +255,22 @@ async function botGetNFsNaoValidadas() {
       })
    })
    ++checks
-   setTimeout(botGetNFsNaoValidadas,check_time)
+   setTimeout(botGetNFsNaoValidadas,(check_time*6)) // (10000*6) = A cada 60 segundos
 }
 
 // Monitor de ocorrências - disparo inicial dos Bot´s
 async function monitorarOcorrencias() {
-      //botCheckNovasNFs()                     // NOTASFISCAIS_INICIADAS_JOB_INSERT.sql
-      //botGeraOcorrenciasIniciais()           // TRACKING_INICIAL_JOB_INSERT.sql
-      //botGetNFsNaoValidadas()                // NOTASFISCAIS_NAO_VALIDADAS.sql  &&  UPDATE_CARGA_NF.sql
-      //botRegistraManifestoNF()               // UPDATE_MANIFESTO_NF.sql
-      //botGeraOcorrenciaSaidaDoCD()           // OCORRENCIA_SAIDA_DO_CD.sql  &&  UPDATE_DATA_MANIFESTO_NF.sql
-      //botGeraOcorrenciaChegadaFilDestino()   // OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
-      //botGeraOcorrenciasTMS()                // OCORRENCIAS_CARGAS.sql
-       botCheckNovasEvidencias()              // COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
-      // botCheckEnviaOcorrencias()               // OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
+
       displayStatistics()
+
+      botCheckNovasNFs()                     // 01: NOTASFISCAIS_INICIADAS_JOB_INSERT.sql
+      botGeraOcorrenciasIniciais()           // 02: TRACKING_INICIAL_JOB_INSERT.sql
+      botGetNFsNaoValidadas()                // 03: NOTASFISCAIS_NAO_VALIDADAS.sql  &&  UPDATE_CARGA_NF.sql
+      botRegistraManifestoNF()               // 04: UPDATE_MANIFESTO_NF.sql
+      botGeraOcorrenciaSaidaDoCD()           // 05: OCORRENCIA_SAIDA_DO_CD.sql  &&  UPDATE_DATA_MANIFESTO_NF.sql
+      botGeraOcorrenciaChegadaFilDestino()   // 06: OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
+      botGeraOcorrenciasTMS()                // 07: OCORRENCIAS_CARGAS.sql
+      botCheckEnviaOcorrencias()             // 08: OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
+
+      setTimeout(botCheckNovasEvidencias,60000) // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
 }

@@ -77,10 +77,10 @@ const checkEnviaOcorrencias = async (id,token) => {
                 sendLog('ERRO',`Envio TRACKING: ${element.DANFE} - (STATUS: "${textErro}" ) ID:${ element.ID} - API Carga: ${element.IDCARGA}` ) 
             } else if ( resultado.success == false ) { 
                 gravaEnvioResultado(element.DANFE, resultado.message, 0)
-                sendLog('WARNING',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - Prot: ${resultado.code} - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
+                sendLog('WARNING',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
             } else if ( resultado.success == true ) { 
                 gravaEnvioResultado(element.DANFE, resultado.message, 1)
-                sendLog('SUCESSO',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - Prot: ${resultado.code} - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
+                sendLog('SUCESSO',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
             } else {
                 sendLog('ALERTA',`Envio TRACKING: ${element.DANFE} - (Sem retorno) - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
             }

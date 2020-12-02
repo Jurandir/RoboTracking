@@ -16,9 +16,8 @@ const checkImagemAgileProcess = async (documento) => {
                   base64Str.imagem = base64Image
                   sendLog('SUCESSO',`Imagem AgileProcess ${documento} : ${base64Str.msg}`)
             } else {
-                  // resposta.err.toJSON().message
                   base64Str.msg   = 'Não tem a imagem solicitada.'
-                  sendLog('WARNING',`Imagem AgileProcess ${documento} : ${base64Str.msg}`)
+                  // sendLog('WARNING',`Imagem AgileProcess ${documento} : ${base64Str.msg}`)
             }  
                  
     }).catch((err)=>{ 

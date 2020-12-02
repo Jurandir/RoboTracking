@@ -53,13 +53,13 @@ async function checkNovasEvidencias(token) {
             evidencia = await easydocs(element.DOCUMENTO)
             
             if (evidencia.ok==false){
-                sendLog('WARNING',`EasyDocs DOC:${element.DOCUMENTO} - (Não achou a imagem solicitada)` )
+                // Não achou na Easydocs e vai procurar na AgileProcess
                 origem       = 'AGILEPROCESS'
                 evidencia    = await agileprocess(element.DOCUMENTO)
             } 
 
             if (evidencia.ok==false){
-                sendLog('WARNING',`AgileProcess DOC:${element.DOCUMENTO} - (Não achou a imagem solicitada)` )
+                sendLog('WARNING',`(EasyDocs,AgileProcess) DOC:${element.DOCUMENTO} - (Não achou a imagem solicitada)` )
             } else
             if (evidencia.ok==true){
                 ret.qtdeSucesso++

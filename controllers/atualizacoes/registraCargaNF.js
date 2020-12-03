@@ -7,7 +7,7 @@ const sqlFileName   =  path.join(__dirname, '../../sql/rotinas/UPDATE_CARGA_NF.s
 
 var sqlCheckNF = fs.readFileSync(sqlFileName, "utf8")
 
-async function registraCargaNF(danfe,idcarga) {    
+async function registraCargaNF(danfe, idcarga, danfe_api ) {    
     let dados = {}
 
     let sql = eval('`'+sqlCheckNF+'`');

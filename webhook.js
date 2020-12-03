@@ -238,17 +238,17 @@ async function botGetNFsNaoValidadas() {
 
             if(( count==0) || (isErr==true) || (isAxiosError==true)) {
                sendLog('WARNING',`(Validação Falhou) - Destinatário: ${cnpj}, NF: ${nroFiscal}, NÃO OK, Erro: ${isErr},AxiosErro: ${isAxiosError}, API Success: ${apiSuccess}.`)
-               registraCargaNF(nota.DANFE,0)
+               registraCargaNF(nota.DANFE,0,'')
                return
             }
-            let danfe     = ret.dados.data.list[0].carga.danfe
+            let danfe_api = ret.dados.data.list[0].carga.danfe
             let idCargaPk = ret.dados.data.list[0].carga.idCargaPk
             let success   = ret.dados.success
             let nf = ret.dados.data.list[0].carga.nroNotaFiscal
             if ( success==true) {
-               registraCargaNF(danfe,idCargaPk).then((ok)=>{
+               registraCargaNF(nota.DANFE, idCargaPk, danfe_api).then((ok)=>{
                   x_botGetNFsNaoValidadas += ok.rowsAffected
-                  sendLog('SUCESSO',`(Validação) - Carga: ${idCargaPk}, NF: ${nf}, Danfe: ${danfe}, OK.`)
+                  sendLog('SUCESSO',`(Validação) - Carga: ${idCargaPk}, NF: ${nf}, Danfe: ${danfe_api}, OK.`)
                })
             }
          })

@@ -1,4 +1,5 @@
 UPDATE NOTAFISCAL
 SET DT_VALIDACAO = CURRENT_TIMESTAMP,
-    IDCARGA = ${idcarga}
+    IDCARGA = ${idcarga},
+    DANFE_API = '${danfe_api}'
 WHERE DANFE = '${danfe}'

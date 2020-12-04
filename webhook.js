@@ -271,6 +271,5 @@ async function monitorarOcorrencias() {
       botGeraOcorrenciaChegadaFilDestino()   // 06: OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
       botGeraOcorrenciasTMS()                // 07: OCORRENCIAS_CARGAS.sql
       botCheckEnviaOcorrencias()             // 08: OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
-
       setTimeout(botCheckNovasEvidencias,60000) // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
 }

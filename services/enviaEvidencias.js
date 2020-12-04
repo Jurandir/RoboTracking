@@ -1,4 +1,5 @@
 const loadAPI = require('./loadAPI')
+const sendDebug = require('../helpers/sendDebug')
 const entrega = require('../models/entrega')
 
 const method = 'POST'
@@ -8,6 +9,17 @@ const server =  (process.env.NODE_ENV=='Production') ? process.env.URL_PRODUCAO 
 const enviaEvidencias = async (token,element,imagem) => {
 
     let params = entrega(token,element,imagem)
+    let params1 = params
+    let len = 0
+
+    try {
+        len = params.content.imagem.length
+    } catch (err) {
+        len = -1
+    }
+
+    params1.content.imagem = `(STRING_ImagemBase64) LEN: ${len}`
+    sendDebug('[enviaEvidencias]', `${method} : "${endpoint}" param:`+JSON.stringify(params1) )
 
     return await loadAPI(method,endpoint,server,params)
 

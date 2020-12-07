@@ -58,34 +58,42 @@ async function checkNovasEvidencias(token) {
                 evidencia    = await agileprocess(element.DOCUMENTO)
             } 
 
-            if (evidencia.ok==false){
+            if (evidencia.ok==false) {
                 sendLog('WARNING',`(EasyDocs,AgileProcess) DOC:${element.DOCUMENTO} - (Não achou a imagem solicitada)` )
             } else
-            if (evidencia.ok==true){
+            if (evidencia.ok==true) {
                 ret.qtdeSucesso++
                 let resposta     = await enviaEvidencias( token, element, evidencia.imagem )
                 try {
                     isErr        = resposta.isErr
                     isAxiosError = resposta.isAxiosError || false
-                    resultado    = resposta.dados  //
-                    gravaEvidenciasLoad_OK(element.DANFE, origem)
+                    resultado    = resposta.dados 
+                    
+                    if(!resultado.message) {
+                        resultado.message = ` Origem ${origem}`
+                    }
+
+                    if(!resultado.code) {
+                        resultado.code = `${resultado.message}`.substr(0,79)
+                    }
+
+                    if (isAxiosError==true) { 
+                        textErro = resposta.err.response.status+' - '+resposta.err.response.statusText
+                        sendLog('AVISO',`Envio IMAGEM - DANFE: ${element.DANFE} - (STATUS: ${textErro})` ) 
+                    } else if ( resultado.success == false ) { 
+                        sendLog('WARNING',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
+                        gravaEvidenciasSend_ERR(element.DANFE, resultado.code, origem)
+                    } else if ( resultado.success == true ) { 
+                        gravaEvidenciasLoad_OK(element.DANFE, origem)
+                        sendLog('SUCESSO',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
+                    } else {
+                        sendLog('ALERTA',`Envio IMAGEM - DANFE: ${element.DANFE} - (Sem retorno)`)
+                    }
                 } catch (err) {
                     isErr = true
                     sendLog('ERRO',`UPD - EVIDÊNCIA - DOC: ${element.DOCUMENTO} - (${element.DANFE})` )
-                }
-    
-                if (isAxiosError==true) { 
-                    textErro = resposta.err.response.status+' - '+resposta.err.response.statusText
-                    sendLog('AVISO',`Envio IMAGEM - DANFE: ${element.DANFE} - (STATUS: ${textErro})` ) 
-                } else if ( resultado.success == false ) { 
-                    sendLog('WARNING',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
-                    gravaEvidenciasSend_ERR(element.DANFE, resultado.code, origem)
-                } else if ( resultado.success == true ) { 
-                    sendLog('SUCESSO',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
-                } else {
-                    sendLog('ALERTA',`Envio IMAGEM - DANFE: ${element.DANFE} - (Sem retorno)`)
-                }
-    
+                    console.log('ERRO:',err)
+                }    
             } 
         })
         await Promise.all(promises)

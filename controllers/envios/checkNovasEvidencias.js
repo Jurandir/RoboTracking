@@ -23,7 +23,7 @@ async function checkNovasEvidencias(token) {
     function gravaEvidenciasSend_ERR( danfe, protocolo, origem ){
         let params = {
             danfe: danfe,
-            enviado: 1,
+            enviado: 0,
             origem: origem,
             load: 0,
             send: 1,
@@ -31,6 +31,19 @@ async function checkNovasEvidencias(token) {
         }
         gravaRegistroEvidencias(params)
     }
+
+    function gravaEvidenciasSend_OK( danfe, protocolo, origem ){
+        let params = {
+            danfe: danfe,
+            enviado: 0,
+            origem: origem,
+            load: 0,
+            send: 1,
+            protocolo: protocolo,
+        }
+        gravaRegistroEvidencias(params)
+    }
+
 
     let dados = await getEvidencias()
     
@@ -84,11 +97,12 @@ async function checkNovasEvidencias(token) {
                         sendLog('WARNING',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
                         gravaEvidenciasSend_ERR(element.DANFE, resultado.code, origem)
                     } else if ( resultado.success == true ) { 
-                        gravaEvidenciasLoad_OK(element.DANFE, origem)
+                        gravaEvidenciasSend_OK(element.DANFE, resultado.code, origem)
                         sendLog('SUCESSO',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
                     } else {
                         sendLog('ALERTA',`Envio IMAGEM - DANFE: ${element.DANFE} - (Sem retorno)`)
                     }
+                    gravaEvidenciasLoad_OK(element.DANFE, origem)
                 } catch (err) {
                     isErr = true
                     sendLog('ERRO',`UPD - EVIDÊNCIA - DOC: ${element.DOCUMENTO} - (${element.DANFE})` )

@@ -191,7 +191,7 @@ async function botCheckNovasEvidencias() {
    checkNovasEvidencias(token).then((ret)=>{
       if(ret.rowsAffected>0){
          novosComprovantesEasedocs++
-         sendLog('AVISO',`Solicitado comprovantes na Easydocs - (${ret.rowsAffected})`)
+         sendLog('AVISO',`Solicitado comprovantes na (Easydocs/AgileProcess) - (${ret.rowsAffected})`)
       }
       x_botCheckNovasEvidencias +=  ret.rowsAffected
    })      

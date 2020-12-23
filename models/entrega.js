@@ -1,11 +1,13 @@
+// Formata JSON para enviar para API
+
 const formata_tzOffset = require('../helpers/formata_tzOffset')
 
-const entrega = (token,dados,imagem) => {
+const entrega = (token,dados) => {
     const ret = { 
         content: {
             observacao: 'ENTREGA REALIZADA',
             dataInicioEntrega: formata_tzOffset( dados.DATAINICIOENTREGA ),
-            fotosComprovantes: [ imagem ],
+            fotosComprovantes: [],
             nomeRecebedor: dados.NOMERECEBEDOR,
             danfe: dados.DANFE,
             nroCte: dados.NROCTE,

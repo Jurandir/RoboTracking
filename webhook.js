@@ -9,6 +9,7 @@ const getCliente                      = require('./controllers/loads/getCliente'
 const checkNovasNFs                   = require('./controllers/atualizacoes/checkNovasNFs')
 const registraCargaNF                 = require('./controllers/atualizacoes/registraCargaNF')
 const checkNovasEvidencias            = require('./controllers/envios/checkNovasEvidencias')
+const checkNovosComprovantes          = require('./controllers/envios/checkNovosComprovantes')
 const registraManifestoNF             = require('./controllers/atualizacoes/registraManifestoNF')
 const atualizaDataManifestoNF         = require('./controllers/atualizacoes/atualizaDataManifestoNF')
 const atualizaDataBaixaManifestoNF    = require('./controllers/atualizacoes/atualizaDataBaixaManifestoNF')
@@ -33,6 +34,7 @@ let sucesso                              = false
 let id                                   = 0
 let token                                = ''
 let checks                               = 0
+
 let notasFiscaisIncluidas                = 0
 let ocorrenciasIniciaisIncluidas         = 0
 let novosManifestosRegistrados           = 0
@@ -40,7 +42,9 @@ let novasOcorrenciaSaidaDoCD             = 0
 let ocorrenciasTracking                  = 0
 let novasOcorrenciaChegadaFilial         = 0
 let novosOcorrenciasTMS                  = 0
-let novosComprovantesEasedocs            = 0
+let novosEncerramentos                   = 0
+let novosComprovantes                    = 0
+
 let x_botCheckNovasNFs                   = 0
 let x_botGeraOcorrenciasIniciais         = 0
 let x_botGetNFsNaoValidadas              = 0
@@ -50,6 +54,7 @@ let x_botGeraOcorrenciaChegadaFilDestino = 0
 let x_botGeraOcorrenciasTMS              = 0
 let x_botCheckNovasEvidencias            = 0
 let x_botCheckEnviaOcorrencias           = 0
+let x_botCheckNovosComprovantes          = 0
 
 // Tela inicial
 process.stdout.write('\x1B[2J\x1B[0f')
@@ -186,17 +191,31 @@ async function botGeraOcorrenciasTMS() {
 }
 
 // 09: botCheckNovasEvidencias() => checkNovasEvidencias() => getEvidencias()
-// Checa existencia de comprovantes na Easydocs ou na AgileProcess
+// Checa existencia de encerramentos e envia para API
 async function botCheckNovasEvidencias() {
    checkNovasEvidencias(token).then((ret)=>{
       if(ret.rowsAffected>0){
-         novosComprovantesEasedocs++
-         sendLog('AVISO',`Solicitado comprovantes na (Easydocs/AgileProcess) - (${ret.rowsAffected})`)
+         novosEncerramentos++
+         sendLog('AVISO',`Verificando encerramento - (${ret.rowsAffected})`)
       }
       x_botCheckNovasEvidencias +=  ret.rowsAffected
    })      
    ++checks
-   setTimeout(botCheckNovasEvidencias,time_evidencias) // (1800000) = A cada 30 minutos
+   setTimeout(botCheckNovasEvidencias,(check_time*6)) // (10000*6) = A cada 60 segundos
+}
+
+// 10: botCeckNovosComprovantes() => checkNovosComprovantes() => getEvidencias()
+// Checa existencia de comprovantes na Easydocs ou na AgileProcess e envia para API
+async function botCheckNovosComprovantes() {
+   checkNovosComprovantes(token).then((ret)=>{
+      if(ret.rowsAffected>0){
+         novosComprovantes++
+         sendLog('AVISO',`Solicitado comprovantes na (Easydocs/AgileProcess) - (${ret.rowsAffected})`)
+      }
+      x_botCheckNovosComprovantes +=  ret.rowsAffected
+   })      
+   ++checks
+   setTimeout(botCheckNovosComprovantes,time_evidencias) // (1800000) = A cada 30 minutos
 }
 
 
@@ -263,13 +282,15 @@ async function monitorarOcorrencias() {
 
       displayStatistics()
 
-      botCheckNovasNFs()                     // 01: NOTASFISCAIS_INICIADAS_JOB_INSERT.sql
-      botGeraOcorrenciasIniciais()           // 02: TRACKING_INICIAL_JOB_INSERT.sql
-      botGetNFsNaoValidadas()                // 03: NOTASFISCAIS_NAO_VALIDADAS.sql  &&  UPDATE_CARGA_NF.sql
-      botRegistraManifestoNF()               // 04: UPDATE_MANIFESTO_NF.sql
-      botGeraOcorrenciaSaidaDoCD()           // 05: OCORRENCIA_SAIDA_DO_CD.sql  &&  UPDATE_DATA_MANIFESTO_NF.sql
-      botGeraOcorrenciaChegadaFilDestino()   // 06: OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
-      botGeraOcorrenciasTMS()                // 07: OCORRENCIAS_CARGAS.sql
-      botCheckEnviaOcorrencias()             // 08: OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
-      setTimeout(botCheckNovasEvidencias,60000) // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      botCheckNovasNFs()                          // 01: NOTASFISCAIS_INICIADAS_JOB_INSERT.sql
+      botGeraOcorrenciasIniciais()                // 02: TRACKING_INICIAL_JOB_INSERT.sql
+      botGetNFsNaoValidadas()                     // 03: NOTASFISCAIS_NAO_VALIDADAS.sql  &&  UPDATE_CARGA_NF.sql
+      botRegistraManifestoNF()                    // 04: UPDATE_MANIFESTO_NF.sql
+      botGeraOcorrenciaSaidaDoCD()                // 05: OCORRENCIA_SAIDA_DO_CD.sql  &&  UPDATE_DATA_MANIFESTO_NF.sql
+      botGeraOcorrenciaChegadaFilDestino()        // 06: OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
+      botGeraOcorrenciasTMS()                     // 07: OCORRENCIAS_CARGAS.sql
+      botCheckEnviaOcorrencias()                  // 08: OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
+      setTimeout(botCheckNovasEvidencias,30000)   // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      setTimeout(botCheckNovosComprovantes,60000) // 10: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      
 }

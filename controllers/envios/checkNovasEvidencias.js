@@ -30,7 +30,7 @@ async function checkNovasEvidencias(token) {
     async function getTodos() {
         const promises = dados.map(async (element, idx) => {
             let isErr        = false
-            let resultado    = {Mensagem:'Sem resposta',Protocolo:'Entrega',Sucesso:false}
+            let resultado    = {Mensagem:'Sem resposta',Protocolo:'Entrega',Sucesso:false, success: false}
             
             let resposta     = await enviaEvidencias( token, element )
 

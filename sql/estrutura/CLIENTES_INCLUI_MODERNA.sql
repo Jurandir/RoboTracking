@@ -13,8 +13,8 @@ INSERT INTO [dbo].[CLIENTES]
            ,[CHAVE_PUBLICA]
            ,[REF_LAYOUT])
      VALUES
-           ('62136304'
-           ,''
+           ('05075152'
+           ,'https://www.itrackbrasil.com.br/ws'
            ,'11552312000710'
            ,'TERMACO789'
            ,''
@@ -25,6 +25,14 @@ INSERT INTO [dbo].[CLIENTES]
            ,2)
 
 GO
+
+-- 28/12/2020
+UPDATE CLIENTES
+SET SERVIDOR = 'https://www.itrackbrasil.com.br/ws',
+    LOGIN = '11552312000710',
+    SENHA = 'TERMACO789'
+WHERE CNPJ_CLI='05075152'
+;
 
 -- 27/11/2020
 UPDATE CLIENTES

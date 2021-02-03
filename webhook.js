@@ -1,4 +1,4 @@
-//-- Versão Atual em ( 01/12/2020 ) 
+//-- Versão Atual em ( 03/02/2021 ) 
 //-- By: Jurandir Ferreira
 const colors = require('colors')
 
@@ -22,7 +22,6 @@ const getNFsNaoValidadas              = require('./controllers/loads/getNFsNaoVa
 const getCargaAPIitrack               = require('./controllers/loads/getCargaAPIitrack')
 const tokensValidos                   = require('./controllers/loads/tokensValidos')
 const sendLog                         = require('./helpers/sendLog')
-
 
 const check_time                 = process.env.CHECK_TIME      || 10000   // mseg 
 const time_evidencias            = process.env.TIME_EVIDENCIAS || 1800000 // mseg 
@@ -213,7 +212,6 @@ async function botCheckNovosComprovantes() {
    setTimeout(botCheckNovosComprovantes,time_evidencias) // (1800000) = A cada 30 minutos
 }
 
-
 // 08: botCheckEnviaOcorrencias() => checkEnviaOcorrencias() => sqlOcorrencias() => enviaOcorrencias()
 // Envia ocorrencias de TRACKING
 async function botCheckEnviaOcorrencias() {
@@ -236,11 +234,14 @@ async function botGetNFsNaoValidadas() {
          return
       }              
       notas.map((nota)=>{
+         
          let cnpj = nota.CNPJ_DESTINATARIO
          let nroFiscal = nota.NUMERO
          let token     = nota.TOKEN
-         let cnpj_user = nota.CNPJ_USER 
-         getCargaAPIitrack(token,cnpj,nroFiscal).then((ret)=>{
+         let cnpj_user = nota.CNPJ_USER
+         let d_api     = nota.DANFE_API
+
+         getCargaAPIitrack(token,cnpj,nroFiscal,d_api).then((ret)=>{
             let count        = 0
             let isAxiosError = false
             let apiSuccess   = false
@@ -292,7 +293,7 @@ async function monitorarOcorrencias() {
       botGeraOcorrenciaChegadaFilDestino()        // 06: OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
       botGeraOcorrenciasTMS()                     // 07: OCORRENCIAS_CARGAS.sql
       botCheckEnviaOcorrencias()                  // 08: OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
-      //setTimeout(botCheckNovasEvidencias,30000)   // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
-      //setTimeout(botCheckNovosComprovantes,60000) // 10: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      setTimeout(botCheckNovasEvidencias,30000)   // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      setTimeout(botCheckNovosComprovantes,60000) // 10: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
       
 }

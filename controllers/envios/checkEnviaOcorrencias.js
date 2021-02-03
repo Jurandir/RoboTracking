@@ -77,9 +77,13 @@ const checkEnviaOcorrencias = async (id,token) => {
                 sendLog('ERRO',`Atualização de TRACKING:${element.DANFE} - ID:${ element.ID}. (${origem_msg})` )
             }
 
-            if(!resultado.success){
+            if(!resultado){
+                resultado = {}
+                resultado.message = 'Erro !!!'
                 resultado.success = false
             }
+
+            resultado.message = (resultado.message) ? resultado.message : '.'
 
             if (isAxiosError==true) { 
                 textErro = resposta.err.response.status+' - '+resposta.err.response.statusText

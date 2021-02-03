@@ -21,7 +21,7 @@ const entrega = (token,dados) => {
                 placaVeiculo: dados.PLACAVEICULO,
             }		
         },
-        token: token
+        token: dados.TOKEN
     }
 
     return ret

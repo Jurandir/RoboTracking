@@ -75,8 +75,8 @@ async function checkNovosComprovantes(token) {
                 ret.qtdeSucesso++
 
                 try {
-
-                    let ret = await enviaEvidenciasBase64( token, element, evidencia.imagem )
+                    let token = element.TOKEN
+                    let ret   = await enviaEvidenciasBase64( token, element, evidencia.imagem )
                     let respostaBase64 = ret.dados
                              
                     if(!respostaBase64.message) {

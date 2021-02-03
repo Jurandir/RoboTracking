@@ -31,12 +31,19 @@ async function checkNovasEvidencias(token) {
         const promises = dados.map(async (element, idx) => {
             let isErr        = false
             let resultado    = {Mensagem:'Sem resposta',Protocolo:'Entrega',Sucesso:false, success: false}
+            let token        = element.TOKEN
             
             let resposta     = await enviaEvidencias( token, element )
 
             try {
                 resultado    = resposta.dados 
                 isErr        = resposta.isErr
+
+                if (!resultado) { 
+                    resultado = {}
+                    resultado.message = 'Não OK.'
+                    resultado.success = false
+                }
 
                 if (!resultado.success) { 
                     resultado.success = false

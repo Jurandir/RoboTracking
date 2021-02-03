@@ -8,7 +8,7 @@ const comprovante = (token, dados, imageBase64, log) => {
             idCarga: dados.IDCARGA,
             fotosComprovante: []
           },
-        token: token
+        token: dados.TOKEN
     }
 
     ret.content.fotosComprovante.push( { extensao: "PNG", imageBase64: imageBase64 })

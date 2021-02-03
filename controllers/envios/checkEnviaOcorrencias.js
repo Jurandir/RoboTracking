@@ -58,7 +58,12 @@ const checkEnviaOcorrencias = async (id,token) => {
             envio.content.descricao         = element.OBSERVACAO
             envio.content.idTrackingCliente = element.ID
             envio.content.nroNotaFiscal     = element.NRONOTAFISCAL
-            envio.token                     = token 
+            envio.token                     = element.TOKEN 
+            envio.content.idResponsavelFk   = element.VALIDO
+
+
+            let origem_msg = `( User:${element.CNPJ_USER}, ID:${element.VALIDO}, Ocorr:${element.ID_OCORRENCIA} )`
+        
 
             let resposta     = await enviaOcorrencias( envio )
             
@@ -69,20 +74,24 @@ const checkEnviaOcorrencias = async (id,token) => {
                 gravaEnvio(element.DANFE)
             } catch (err) {
                 isErr = true
-                sendLog('ERRO',`Atualização de TRACKING:${element.DANFE} - ID:${ element.ID}.` )
+                sendLog('ERRO',`Atualização de TRACKING:${element.DANFE} - ID:${ element.ID}. (${origem_msg})` )
+            }
+
+            if(!resultado.success){
+                resultado.success = false
             }
 
             if (isAxiosError==true) { 
                 textErro = resposta.err.response.status+' - '+resposta.err.response.statusText
-                sendLog('ERRO',`Envio TRACKING: ${element.DANFE} - (STATUS: "${textErro}" ) ID:${ element.ID} - API Carga: ${element.IDCARGA}` ) 
+                sendLog('ERRO',`Envio TRACKING: ${element.DANFE} - (STATUS: "${textErro}" ) ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})` ) 
             } else if ( resultado.success == false ) { 
                 gravaEnvioResultado(element.DANFE, resultado.message, 0)
-                sendLog('WARNING',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
+                sendLog('WARNING',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
             } else if ( resultado.success == true ) { 
                 gravaEnvioResultado(element.DANFE, resultado.message, 1)
-                sendLog('SUCESSO',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
+                sendLog('SUCESSO',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
             } else {
-                sendLog('ALERTA',`Envio TRACKING: ${element.DANFE} - (Sem retorno) - ID:${ element.ID} - API Carga: ${element.IDCARGA}`)
+                sendLog('ALERTA',`Envio TRACKING: ${element.DANFE} - (Sem retorno) - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
             }
 
         })

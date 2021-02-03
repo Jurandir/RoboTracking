@@ -20,7 +20,7 @@ const checkEnviaOcorrencias           = require('./controllers/envios/checkEnvia
 const geraOcorrenciasTMS              = require('./controllers/eventos/geraOcorrenciasTMS')
 const getNFsNaoValidadas              = require('./controllers/loads/getNFsNaoValidadas')
 const getCargaAPIitrack               = require('./controllers/loads/getCargaAPIitrack')
-const getToken                        = require('./controllers/loads/getToken')
+const tokensValidos                   = require('./controllers/loads/tokensValidos')
 const sendLog                         = require('./helpers/sendLog')
 
 
@@ -89,19 +89,14 @@ function displayStatistics() {
    setTimeout(displayStatistics,1000)
 }
 
-// 00: getToken()
-// Obtem o tokem para acesso a API
-getToken().then((ret)=>{
-   if ( (ret.err) && (!ret.token) ) {
-      sendLog('ERRO',`Obter Token - Erro:(${ret.err}), Token:(${ret.token})`)
-      process.exit()            
-   } else {
-      sucesso = ret.success
-      id      = ret.id
-      token   = ret.token
-      sendLog('INFO',`Sucesso - Logado na API (${sucesso},${id},${node_env})`)
-      monitorarOcorrencias()
-   }
+
+global.TOKENS = []
+
+// Obtem os tokens para acesso a API
+tokensValidos().then(x=>{
+   // id, token
+   sendLog('INFO',`Sucesso - Logado na API (${node_env})`)
+   monitorarOcorrencias()
 })
 
 // 01: botCheckNovasNFs() => checkNovasNFs() => (SQL: NOTASFISCAIS_INICIADAS_JOB_INSERT)
@@ -242,22 +237,29 @@ async function botGetNFsNaoValidadas() {
       }              
       notas.map((nota)=>{
          let cnpj = nota.CNPJ_DESTINATARIO
-         let nroFiscal = nota.NUMERO 
+         let nroFiscal = nota.NUMERO
+         let token     = nota.TOKEN
+         let cnpj_user = nota.CNPJ_USER 
          getCargaAPIitrack(token,cnpj,nroFiscal).then((ret)=>{
             let count        = 0
             let isAxiosError = false
             let apiSuccess   = false
 
             isErr = ret.isErr || false
+
+            if (!ret.dados) {
+               isErr = true
+            }
+
             if (isErr == false) {
-               count          = ret.dados.data.count
-               apiSuccess     = ret.dados.success
-               isAxiosError   = ret.isAxiosError
+               apiSuccess     = (ret.dados)         ? ret.dados.success    : false
+               isAxiosError   = (ret.isAxiosError)  ? (ret.isAxiosError)   : false
+               count          = (ret.dados.data)    ? ret.dados.data.count : 0
             }
 
             if(( count==0) || (isErr==true) || (isAxiosError==true)) {
-               sendLog('WARNING',`(Validação Falhou) - Destinatário: ${cnpj}, NF: ${nroFiscal}, NÃO OK, Erro: ${isErr},AxiosErro: ${isAxiosError}, API Success: ${apiSuccess}.`)
-               registraCargaNF(nota.DANFE,0,'')
+               sendLog('WARNING',`(Validação Falhou) - Não OK - Dest.: ${cnpj}, NF: ${nroFiscal}, User: ${cnpj_user}, Err: ${isErr}, API Success: ${apiSuccess}.`)
+               registraCargaNF(nota.DANFE,0,'(Validação Falhou)')
                return
             }
             let danfe_api = ret.dados.data.list[0].carga.danfe
@@ -267,7 +269,7 @@ async function botGetNFsNaoValidadas() {
             if ( success==true) {
                registraCargaNF(nota.DANFE, idCargaPk, danfe_api).then((ok)=>{
                   x_botGetNFsNaoValidadas += ok.rowsAffected
-                  sendLog('SUCESSO',`(Validação) - Carga: ${idCargaPk}, NF: ${nf}, Danfe: ${danfe_api}, OK.`)
+                  sendLog('SUCESSO',`(Validação) - Carga: ${idCargaPk}, NF: ${nf}, Danfe: ${danfe_api}, User: ${cnpj_user}, OK.`)
                })
             }
          })
@@ -290,7 +292,7 @@ async function monitorarOcorrencias() {
       botGeraOcorrenciaChegadaFilDestino()        // 06: OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
       botGeraOcorrenciasTMS()                     // 07: OCORRENCIAS_CARGAS.sql
       botCheckEnviaOcorrencias()                  // 08: OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
-      setTimeout(botCheckNovasEvidencias,30000)   // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
-      setTimeout(botCheckNovosComprovantes,60000) // 10: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      //setTimeout(botCheckNovasEvidencias,30000)   // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      //setTimeout(botCheckNovosComprovantes,60000) // 10: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
       
 }

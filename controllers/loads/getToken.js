@@ -5,9 +5,11 @@ const url_teste    = process.env.URL_TESTE    || 'http://beta.martinlabs.com.br/
 const utl_producao = process.env.URL_PRODUCAO || 'https://www.itrackbrasil.com.br/ws'
 const ambiente     = process.env.URL_PRODUCAO || 'Test'
 
-const getToken = async () => {
+const getToken = async (cnpj,pwd) => {
     let servidor = (ambiente=='Producion') ? utl_producao : url_teste
-    let ret = await loadAPI('POST','/User/Login',servidor,login ) 
+    let params   = await login(cnpj,pwd)
+    let ret      = await loadAPI('POST','/User/Login',servidor,params ) 
+    
     if (ret.isErr==false) {
         let success = ret.dados.success
         let id = -1

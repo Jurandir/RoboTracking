@@ -79,6 +79,13 @@ async function checkNovosComprovantes(token) {
                     let ret   = await enviaEvidenciasBase64( token, element, evidencia.imagem )
                     let respostaBase64 = ret.dados
                              
+                    if(!respostaBase64) {
+                        respostaBase64 = {}
+                        respostaBase64.success = false
+                        respostaBase64.message = null
+                        respostaBase64.code    = null
+                    }
+
                     if(!respostaBase64.message) {
                         respostaBase64.message = ` Origem ${origem}`
                     }

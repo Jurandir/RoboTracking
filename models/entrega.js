@@ -3,12 +3,13 @@
 const formata_tzOffset = require('../helpers/formata_tzOffset')
 
 const entrega = (token,dados) => {
+    let nomeRecebedor = dados.NOMERECEBEDOR || 'RESPONSÁVEL NA ENTREGA'
     const ret = { 
         content: {
             observacao: 'ENTREGA REALIZADA',
             dataInicioEntrega: formata_tzOffset( dados.DATAINICIOENTREGA ),
             fotosComprovantes: [],
-            nomeRecebedor: dados.NOMERECEBEDOR,
+            nomeRecebedor: nomeRecebedor,
             danfe: dados.DANFE,
             nroCte: dados.NROCTE,
             idSucessoMotivo: 0,

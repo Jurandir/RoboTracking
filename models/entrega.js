@@ -14,7 +14,7 @@ const entrega = (token,dados) => {
             nroCte: dados.NROCTE,
             idSucessoMotivo: 0,
             dataEmissaoDanfe: formata_tzOffset( dados.DATAEMISSAODANFE ),
-            dataFinalizacao: formata_tzOffset( dados.DATAFINALIZACAO ),
+            dataFinalizacao: formata_tzOffset( dados.DATAFINALIZACAO || dados.DATAINICIOENTREGA ),
             documentoRecebedor: dados.DOCUMENTORECEBEDOR,
             motorista: {
                 tipoVeiculo: dados.TIPOVEICULO,

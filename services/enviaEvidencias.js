@@ -4,6 +4,8 @@ const loadAPI = require('./loadAPI')
 const sendDebug = require('../helpers/sendDebug')
 const entrega = require('../models/entrega')
 
+require('dotenv').config()
+
 const method = 'POST'
 const endpoint = '/User/Carga/Entrega/Danfe'
 const server =  (process.env.NODE_ENV=='Production') ? process.env.URL_PRODUCAO : process.env.URL_TESTE

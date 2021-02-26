@@ -13,6 +13,8 @@ const checkImagemAgileProcess = async (documento) => {
             let base64Image   = ''
             let tipoConteudo  = 'INFO'
 
+            base64Str.resposta = resposta
+
             if (resposta.Err) {
                   resposta.Err = true 
                   msg = resposta.err

@@ -1,0 +1,3 @@
+const listaDANFEs = ['35210262136304003820550010000502441176449965']
+
+module.exports = listaDANFEs

@@ -15,12 +15,12 @@ let ind = listaID.length;
                 if(dados) {
                     let ind1 = ind
                     enviaEvidencias(dados.TOKEN,dados).then((ret)=>{
+                        console.log('DADOS:')
                         console.log(`(${ind1} ) - ID:`,id,'Retorno:',ret,dados)
                     })
                 } 
             })
 
     }
-
     
 })()

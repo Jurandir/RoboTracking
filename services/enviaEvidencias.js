@@ -15,7 +15,7 @@ const enviaEvidencias = async (token,element) => {
 
     let params = entrega(token,element)
 
-    sendDebug('[enviaEvidencias]', `${method} : "${endpoint}" param:`+JSON.stringify(params) )
+    // sendDebug('[enviaEvidencias]', `${method} : "${endpoint}" param:`+JSON.stringify(params) )
 
     return await loadAPI(method,endpoint,server,params)
 

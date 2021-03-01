@@ -4,6 +4,7 @@ const gravaRegistroEntrega    = require('../comprovantes/gravaRegistroEntrega')
 const getFechaEntrega         = require('../loads/getFechaEntrega')
 const enviaEvidencias         = require('../../services/enviaEvidencias')
 const sendLog                 = require('../../helpers/sendLog')
+const sendDebug               = require('../../helpers/sendDebug')
 
 async function checkNovasEvidencias(token) {  
     let ret   = { rowsAffected: 0, qtdeSucesso: 0,msg: '', isErr: false  }   
@@ -58,13 +59,19 @@ async function checkNovasEvidencias(token) {
                 }
 
                 if ( resultado.success == true ) { 
-                    resultado.message = resultado.message+', Cod:'+resultado.code
+                    resultado.message = resultado.message+' - Success..'
                     gravaFechaEntrega(element.DANFE, 2, resultado.message )
-                    sendLog('SUCESSO',`Registro de entrega - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
+                    sendLog('SUCESSO',`Registro de entrega - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
                 } else {
-                    resultado.message = resultado.message+', Err:'+resultado.code
-                    gravaFechaEntrega(element.DANFE, 0 , resultado.message)
-                    sendLog('WARNING',`Registro de entrega - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)
+                    if(resultado.message == 'Erro inesperado, tente novamente mais tarde') {
+                        gravaFechaEntrega(element.DANFE, 2, resultado.message )
+                        sendLog('AVISO',`Registro de entrega - Finalizado - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Considerado OK.`)
+                    } else {
+                        resultado.message = resultado.message+', Err:'+resultado.code
+                        gravaFechaEntrega(element.DANFE, 0 , resultado.message)
+                        sendLog('WARNING',`Registro de entrega - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)    
+                        sendDebug('[Registro de entrega]', ` idCargaPK: ${element.IDCARGA} - Resultado:`+JSON.stringify(resultado) )
+                    }
                 } 
 
             } catch (err) {

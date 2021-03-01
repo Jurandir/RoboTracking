@@ -28,7 +28,7 @@ let ind = listaDANFEs.length;
 })()
 
 
-function grava_response(resultado,element) {
+function grava_response(ret_api,element) {
     function gravaFechaEntrega( danfe, enviado, protocolo ){
         let params = {
             danfe: danfe,
@@ -37,17 +37,26 @@ function grava_response(resultado,element) {
         }
         gravaRegistroEntrega(params)
     }    
-    let msg1 = ''
-    let msg2 = ''
+    let msg1      = ''
+    let msg2      = ''
+    let resultado = ret_api.dados
    
     if ( resultado.success == true ) { 
-        msg1 = resultado.dados.message
+        msg1 = resultado.message
+        if (msg1==undefined) { msg1 = 'Success. OK.'}
         gravaFechaEntrega(element.DANFE, 2, msg1 )
-        msg2 = `SUCESSO - Registro de entrega - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${msg1} - Success: ${resultado.dados.success}`
+        msg2 = `SUCESSO - Registro de entrega - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${msg1} - Success: ${resultado.success}`
     } else {
-        msg1 = resultado.dados.message
-        gravaFechaEntrega(element.DANFE, 0 , msg1)
-        msg2 = `WARNING - Registro de entrega - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${msg1} - Success: ${resultado.dados.success}`
+        msg1 = resultado.message
+        
+        if(msg1 == 'Erro inesperado, tente novamente mais tarde') {
+            gravaFechaEntrega(element.DANFE, 2, msg1 )
+            msg2 = `AVISO - Registro de entrega - Finalizado - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Message: ${resultado.message}`
+        } else {
+            resultado.message = resultado.message+', Err:'+resultado.code
+            gravaFechaEntrega(element.DANFE, 0 , msg1 )
+            msg2 = `WARNING - Registro de entrega - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`    
+        }
     } 
     console.log(msg2)
 }

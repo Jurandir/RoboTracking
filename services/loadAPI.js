@@ -15,10 +15,10 @@ const loadAPI = async (method,endpoint,server,params) => {
             ret = await axios.get( url, { params }, config )
         }
         
-        console.log('LOADAPI: status=',ret.status)
-        console.log('LOADAPI: url=',url)
-        console.log('LOADAPI: config.data=',ret.config.data)
-        console.log('LOADAPI: data=',ret.data)
+        // console.log('LOADAPI: status=',ret.status)
+        // console.log('LOADAPI: url=',url)
+        // console.log('LOADAPI: config.data=',ret.config.data)
+        // console.log('LOADAPI: data=',ret.data)
 
         return { dados : ret.data, isErr: false, isAxiosError: ret.isAxiosError || false }
 

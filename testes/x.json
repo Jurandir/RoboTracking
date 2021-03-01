@@ -1,0 +1,20 @@
+{
+    "content": {
+        "observacao": "ENTREGA REALIZADA",
+        "dataInicioEntrega": "2021-02-20T14:35:35-03:00",
+        "fotosComprovantes": [],
+        "nomeRecebedor": "POSTO ALBALONGA LTDA",
+        "danfe": "35210205075152000177550130001037611875214244",
+        "nroCte": 3162413,
+        "idSucessoMotivo": 0,
+        "dataEmissaoDanfe": "2021-02-15T00:00:00-03:00",
+        "dataFinalizacao": "2021-02-22T15:19:20-03:00",
+        "documentoRecebedor": "N.INFO",
+        "motorista": {
+            "tipoVeiculo": "99",
+            "nome": "ANTONIO MANOEL BOMFIM JUNIOR",
+            "placaVeiculo": "JML0051"
+        }
+    },
+    "token": "41YIzpld%2B3rFKIwbpy9g%2FFvMKv%2Buaro8badWdwkVonqe9yUjdfBSUutNg36zKyPI9XtWT7mICJQsTFpfiYlo%2FQpoZ0NFbv1lAqAskvbtJlMqF7o1Qfc3UCx%2BRfzG4m%2FH"
+}

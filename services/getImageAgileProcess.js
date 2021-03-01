@@ -14,6 +14,10 @@ const getImageAgileProcess = async (doc) => {
 
     // console.log('ret.json_response:',ret.dados.json_response)
 
+    if(!ret.dados){
+        ret.dados={}
+    }
+
     if(ret.dados.json_response==null || ret.dados.json_response==undefined) {
         let new_param = params
         let deletad   = !params.filters.logically_deleted

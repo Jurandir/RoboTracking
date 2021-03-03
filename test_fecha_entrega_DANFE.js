@@ -13,17 +13,21 @@ let ind = listaDANFEs.length;
     for await (let danfe of listaDANFEs) {
             getFechaEntregaDANFE(danfe).then( (dados)=> {
                 --ind
+                console.log('DANFE:',danfe)
                 if(dados) {
                     let ind1 = ind
                     enviaEvidencias(dados.TOKEN,dados).then((ret)=>{
-                        console.log('DADOS:')
-                        console.log(`(${ind1} ) - DANFE:`,danfe,'Retorno:',ret,dados)
+                        //console.log('DADOS:')
+                        //console.log(`(${ind1} ) - DANFE:`,danfe,'Retorno:',ret,dados)
+                        console.log('Retorno:',ret.dados.success)
                         grava_response(ret,dados)
                     })
                 } 
             })
-
     }
+
+    console.log('....')
+    // process.exit(0)
     
 })()
 

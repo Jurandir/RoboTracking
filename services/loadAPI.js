@@ -15,6 +15,7 @@ const loadAPI = async (method,endpoint,server,params) => {
             ret = await axios.get( url, { params }, config )
         }
         
+        // console.log('LOADAPI: ',ret)
         // console.log('LOADAPI: status=',ret.status)
         // console.log('LOADAPI: url=',url)
         // console.log('LOADAPI: config.data=',ret.config.data)

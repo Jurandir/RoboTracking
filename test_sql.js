@@ -18,15 +18,20 @@ let carga = {
     embarcador: '03470727001283',
     transportador: '11552312000710'
 }
-
 atualizaCargaITRECK(carga).then((ret)=>{
     console.log('*',ret)
 })
 */
 
+/*
 const getTokensValidosDB = require('./controllers/loads/getTokensValidosDB')
-
 getTokensValidosDB().then((ret)=>{
+    console.log('*',ret)
+})
+*/
+
+const atualizaBDidCargaNotaFiscal = require('./controllers/atualizacoes/atualizaBDidCargaNotaFiscal')
+atualizaBDidCargaNotaFiscal().then((ret)=>{
     console.log('*',ret)
 })
 

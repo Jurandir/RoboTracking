@@ -12,12 +12,15 @@ const server =  (process.env.NODE_ENV=='Production') ? process.env.URL_PRODUCAO 
 const debug_base64 = process.env.DEBUG_MOSTRA_BASE64 || 'OFF'
 
 const enviaEvidencias = async (token,element) => {
-
+    let ret    = {}
     let params = entrega(token,element)
 
     // sendDebug('[enviaEvidencias]', `${method} : "${endpoint}" param:`+JSON.stringify(params) )
+    
+    ret = await loadAPI(method,endpoint,server,params)
+    ret.params = params
 
-    return await loadAPI(method,endpoint,server,params)
+    return ret
 
 }
 

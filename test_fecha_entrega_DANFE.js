@@ -17,9 +17,10 @@ let ind = listaDANFEs.length;
                 if(dados) {
                     let ind1 = ind
                     enviaEvidencias(dados.TOKEN,dados).then((ret)=>{
-                        //console.log('DADOS:')
-                        //console.log(`(${ind1} ) - DANFE:`,danfe,'Retorno:',ret,dados)
-                        console.log('Retorno:',ret.dados.success)
+                        console.log('POST ../User/Carga/Entrega/Danfe:')
+                        console.log(`(${ind1}) - DANFE:`,danfe)
+                        console.log('Request:',ret.params)
+                        console.log('Response:',ret.dados)
                         grava_response(ret,dados)
                     })
                 } 

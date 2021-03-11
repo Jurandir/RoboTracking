@@ -230,7 +230,7 @@ async function botCheckEnviaOcorrencias() {
 // Valida na API a NF para o destinatario e registra id.Carga
 async function botGetNFsNaoValidadas() {
    getNFsNaoValidadas().then((notas)=>{
-      if(notas.length==0) {
+      if(notas.length==0 || notas.length == undefined) {
          return
       }              
       notas.map((nota)=>{

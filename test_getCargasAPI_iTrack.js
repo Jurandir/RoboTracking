@@ -36,6 +36,11 @@ getTokensValidosDB().then((ret)=>{
         }
 
         getCargasAPIiTrack(params).then((ret)=>{
+
+            if(ret==undefined || ret.dados==undefined) {
+                console.log('RET:',ret)
+                return
+            }
         
             console.log(`${params.cnpjEmbarcadorTransportador} - `,ret.dados)
     

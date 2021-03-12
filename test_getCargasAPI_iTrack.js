@@ -42,7 +42,7 @@ getTokensValidosDB().then((ret)=>{
                 return
             }
         
-            console.log(`${params.cnpjEmbarcadorTransportador} - `,ret.dados)
+            //console.log(`${params.cnpjEmbarcadorTransportador} - `,ret.dados)
     
             if(ret.dados.success) {
                 let lista = ret.dados.data.list
@@ -58,7 +58,7 @@ getTokensValidosDB().then((ret)=>{
                     a.embarcador     = element.carga.embarcador.responsavel.cnpj
                     a.transportador  = element.carga.transportador.responsavel.cnpj
                     atualizaCargaITRECK(a).then((res)=>{
-                        console.log(PAGE,' , UpdateCARGA : ',res)
+                        console.log(a.transportador,PAGE,' , UpdateCARGA : ',res)
                     })
                 })
         

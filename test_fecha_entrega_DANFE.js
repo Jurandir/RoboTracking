@@ -5,15 +5,18 @@ const enviaEvidencias        = require('./services/enviaEvidencias')
 
 require('dotenv').config()
 
+const SEM_MAPA_DE_ENTREGA = true /// <<<============== Não Testa MAPA 
+
 let ind = listaDANFEs.length;
 
 ( async () => {
 
 
     for await (let danfe of listaDANFEs) {
-            getFechaEntregaDANFE(danfe).then( (dados)=> {
+            getFechaEntregaDANFE(danfe,SEM_MAPA_DE_ENTREGA).then( (dados)=> {
                 --ind
                 console.log('DANFE:',danfe)
+                console.log('DADOS:',dados)
                 if(dados) {
                     let ind1 = ind
                     enviaEvidencias(dados.TOKEN,dados).then((ret)=>{

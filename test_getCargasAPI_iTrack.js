@@ -5,7 +5,7 @@ const getTokensValidosDB   = require('./controllers/loads/getTokensValidosDB')
 require('dotenv').config()
 
 const PAGE = 1
-const TAMANHO = 1000
+const TAMANHO = 5000
 
 const method = 'GET'
 const endpoint = '/User/CargaSimples'

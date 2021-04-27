@@ -5,7 +5,7 @@ const enviaEvidencias        = require('./services/enviaEvidencias')
 
 require('dotenv').config()
 
-const SEM_MAPA_DE_ENTREGA = true /// <<<============== Não Testa MAPA 
+const SEM_MAPA_DE_ENTREGA = false /// <<<============== Não Testa MAPA 
 
 let ind = listaDANFEs.length;
 

@@ -15,21 +15,15 @@ const loadAPI = async (method,endpoint,server,params) => {
             ret = await axios.get( url, { params }, config )
         }
         
-        // console.log('LOADAPI: ',ret)
-        // console.log('LOADAPI: status=',ret.status)
-        // console.log('LOADAPI: url=',url)
-        // console.log('LOADAPI: config.data=',ret.config.data)
-        // console.log('LOADAPI: data=',ret.data)
-
-        return { dados : ret.data, isErr: false, isAxiosError: ret.isAxiosError || false }
+        return { success: true, dados : ret.data, isAxiosError: ret.isAxiosError || false , isErr: false }
 
     } catch (err) { 
         
         if (err.message) {
-            dados = {url: url, err: err.message ,Err: true, isAxiosError: false } 
+            dados = { success: false, dados:null ,url: url, err: err.message ,Err: true, isAxiosError: false, isErr: true } 
         } else {
-           dados = {url: url, err ,Err: true, isAxiosError: true } 
-           sendLog('ERRO', 'loadAPI: '+JSON.stringify(dados).substr(0,250) )
+            dados = { success: false, dados:null ,url: url, err ,Err: true, isAxiosError: true, isErr: true } 
+            sendLog('ERRO', 'loadAPI: '+JSON.stringify(dados).substr(0,250) )
         }   
         return dados
     }

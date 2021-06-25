@@ -235,45 +235,38 @@ async function botGetNFsNaoValidadas() {
       }              
       notas.map((nota)=>{
          
-         let cnpj = nota.CNPJ_DESTINATARIO
-         let nroFiscal = nota.NUMERO
          let token     = nota.TOKEN
-         let cnpj_user = nota.CNPJ_USER
-         let d_api     = nota.DANFE_API
+         let danfe     = nota.DANFE
 
-         getCargaAPIitrack(token,cnpj,nroFiscal,d_api).then((ret)=>{
-            let count        = 0
-            let isAxiosError = false
-            let apiSuccess   = false
+         getCargaAPIitrack(token,danfe).then((ret)=>{
 
-            isErr = ret.isErr || false
+            if(ret.success) {
 
-            if (!ret.dados) {
-               isErr = true
-            }
+               if(ret.dados.success) {
+                  let danfe_api = ret.dados.data.list[0].carga.danfe
+                  let idCargaPk = ret.dados.data.list[0].carga.idCargaPk
+                  // Grava idCargaPK em "SIC.dbo.NOTAFISCAL"
+                  registraCargaNF(danfe, idCargaPk, null).then((ok)=>{
+                     sendLog('SUCESSO',`(Validação) - idCargaPK: ${idCargaPk}, Danfe: ${danfe_api}, OK.`)
+                  })
+               } else {
+                  // insere carga na API iTrack
+                  insertNewCarga(danfe).then(ret=>{
+                     // Grava idCargaPK em "SIC.dbo.NOTAFISCAL"
+                     registraCargaNF(danfe, idCargaPk, danfe_api).then((ok)=>{
+                        sendLog('SUCESSO',`(Inclusão CARGA) - idCargaPK: ${idCargaPk}, Danfe: ${danfe_api}, OK.`)
+                     })   
+                  })
+               }
 
-            if (isErr == false) {
-               apiSuccess     = (ret.dados)         ? ret.dados.success    : false
-               isAxiosError   = (ret.isAxiosError)  ? (ret.isAxiosError)   : false
-               count          = (ret.dados.data)    ? ret.dados.data.count : 0
-            }
-
-            if(( count==0) || (isErr==true) || (isAxiosError==true)) {
-               sendLog('WARNING',`(Validação Falhou) - Não OK - Dest.: ${cnpj}, NF: ${nroFiscal}, User: ${cnpj_user}, Err: ${isErr}, API Success: ${apiSuccess}.`)
+            } else {
+               let msg = ret.err
+               sendLog('WARNING',`(Validação Falhou) - Não OK - DANFE: ${danfe}, Mensagem: ${msg}`)
                registraCargaNF(nota.DANFE,0,'(Validação Falhou)')
-               return
             }
-            let danfe_api = ret.dados.data.list[0].carga.danfe
-            let idCargaPk = ret.dados.data.list[0].carga.idCargaPk
-            let success   = ret.dados.success
-            let nf = ret.dados.data.list[0].carga.nroNotaFiscal
-            if ( success==true) {
-               registraCargaNF(nota.DANFE, idCargaPk, danfe_api).then((ok)=>{
-                  x_botGetNFsNaoValidadas += ok.rowsAffected
-                  sendLog('SUCESSO',`(Validação) - Carga: ${idCargaPk}, NF: ${nf}, Danfe: ${danfe_api}, User: ${cnpj_user}, OK.`)
-               })
-            }
+
          })
+
       })
    })
    ++checks
@@ -288,12 +281,12 @@ async function monitorarOcorrencias() {
       botCheckNovasNFs()                          // 01: NOTASFISCAIS_INICIADAS_JOB_INSERT.sql
       botGeraOcorrenciasIniciais()                // 02: TRACKING_INICIAL_JOB_INSERT.sql
       botGetNFsNaoValidadas()                     // 03: NOTASFISCAIS_NAO_VALIDADAS.sql  &&  UPDATE_CARGA_NF.sql
-      botRegistraManifestoNF()                    // 04: UPDATE_MANIFESTO_NF.sql
-      botGeraOcorrenciaSaidaDoCD()                // 05: OCORRENCIA_SAIDA_DO_CD.sql  &&  UPDATE_DATA_MANIFESTO_NF.sql
-      botGeraOcorrenciaChegadaFilDestino()        // 06: OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
-      botGeraOcorrenciasTMS()                     // 07: OCORRENCIAS_CARGAS.sql
-      botCheckEnviaOcorrencias()                  // 08: OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
-      setTimeout(botCheckNovasEvidencias,30000)   // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
-      setTimeout(botCheckNovosComprovantes,60000) // 10: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      // botRegistraManifestoNF()                    // 04: UPDATE_MANIFESTO_NF.sql
+      // botGeraOcorrenciaSaidaDoCD()                // 05: OCORRENCIA_SAIDA_DO_CD.sql  &&  UPDATE_DATA_MANIFESTO_NF.sql
+      // botGeraOcorrenciaChegadaFilDestino()        // 06: OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
+      // botGeraOcorrenciasTMS()                     // 07: OCORRENCIAS_CARGAS.sql
+      // botCheckEnviaOcorrencias()                  // 08: OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
+      // setTimeout(botCheckNovasEvidencias,30000)   // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      // setTimeout(botCheckNovosComprovantes,60000) // 10: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
       
 }

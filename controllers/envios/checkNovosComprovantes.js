@@ -99,7 +99,14 @@ async function checkNovosComprovantes(token) {
                     }
 
                     if ( respostaBase64.success == true ) { 
-                            let aviso = respostaBase64.data[0] || 'OK'
+                            let aviso = `${respostaBase64.data[0]}` || 'OK'
+
+                            if(aviso.length > 100) {
+                                aviso = '(Aviso "data[0]" > 100 bytes) - Problemas em base64.'
+                            } else if(aviso =='undefined') {
+                                aviso = 'OK'
+                            }
+
                             respostaBase64.message = respostaBase64.message+', '+aviso
                             gravaEvidenciasSend_OK(element.DANFE, respostaBase64.code, origem)
                             sendLog('SUCESSO',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${respostaBase64.message} - Success: ${respostaBase64.success}`)
@@ -107,9 +114,10 @@ async function checkNovosComprovantes(token) {
                             respostaBase64.message = respostaBase64.message+', '+resultado.code
                             gravaEvidenciasSend_ERR(element.DANFE, respostaBase64.message , origem)
                             sendLog('WARNING',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${respostaBase64.message} - Success: ${respostaBase64.success}`)
+                            console.log('WARNING checkNovosComprovantes:',ret)
                     }  
 
-                    gravaEvidenciasLoad_OK(element.DANFE, origem)
+                    // gravaEvidenciasLoad_OK(element.DANFE, origem)
 
                 } catch (err) {
                     isErr = true

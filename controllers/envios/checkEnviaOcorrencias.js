@@ -88,7 +88,9 @@ const checkEnviaOcorrencias = async (id,token) => {
             if (isAxiosError==true) { 
                 textErro = resposta.err.response.status+' - '+resposta.err.response.statusText
                 sendLog('ERRO',`Envio TRACKING: ${element.DANFE} - (STATUS: "${textErro}" ) ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})` ) 
+                console.log('1-checkEnviaOcorrencias:',resposta)
             } else if ( resultado.success == false ) { 
+                origem_msg = resposta.err
                 gravaEnvioResultado(element.DANFE, resultado.message, 0)
                 sendLog('WARNING',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
             } else if ( resultado.success == true ) { 
@@ -96,6 +98,7 @@ const checkEnviaOcorrencias = async (id,token) => {
                 sendLog('SUCESSO',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
             } else {
                 sendLog('ALERTA',`Envio TRACKING: ${element.DANFE} - (Sem retorno) - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
+                console.log('4-checkEnviaOcorrencias:',resposta)
             }
 
         })

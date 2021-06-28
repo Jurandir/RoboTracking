@@ -33,6 +33,7 @@ async function checkNovasEvidencias(token) {
             let isErr        = false
             let resultado    = {Mensagem:'Sem resposta',Protocolo:'Entrega',Sucesso:false, success: false}
             let token        = element.TOKEN
+            let msg          = ''
             
             let resposta     = await enviaEvidencias( token, element )
 
@@ -67,9 +68,10 @@ async function checkNovasEvidencias(token) {
                         gravaFechaEntrega(element.DANFE, 2, resultado.message )
                         sendLog('AVISO',`Registro de entrega - Finalizado - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Considerado OK.`)
                     } else {
+                        msg               = resposta.err
                         resultado.message = resultado.message+', Err:'+resultado.code
                         gravaFechaEntrega(element.DANFE, 0 , resultado.message)
-                        sendLog('WARNING',`Registro de entrega - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`)    
+                        sendLog('WARNING',`Registro de entrega - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success} - ERRO: ${err}`)    
                         sendDebug('[Registro de entrega]', ` idCargaPK: ${element.IDCARGA} - Resultado:`+JSON.stringify(resultado) )
                     }
                 } 
@@ -77,7 +79,7 @@ async function checkNovasEvidencias(token) {
             } catch (err) {
                     isErr = true
                     sendLog('ERRO',`UPD - EVIDÊNCIA - DOC: ${element.DOCUMENTO} - (${element.DANFE})` )
-                    console.log('ERRO:',err)
+                    console.log('checkNovasEvidencias - ERRO:',err)
             }    
              
         })

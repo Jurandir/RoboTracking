@@ -90,12 +90,12 @@ const checkEnviaOcorrencias = async (id,token) => {
                 sendLog('ERRO',`Envio TRACKING: ${element.DANFE} - (STATUS: "${textErro}" ) ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})` ) 
                 console.log('1-checkEnviaOcorrencias:',resposta)
             } else if ( resultado.success == false ) { 
-                origem_msg = resposta.err
+                origem_msg = resposta.err || 'checkEnviaOcorrencias.js'
                 gravaEnvioResultado(element.DANFE, resultado.message, 0)
-                sendLog('WARNING',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
+                sendLog('WARNING',`Envio TRACKING: - Ret API: "${resultado.message}" -${element.DANFE} - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
             } else if ( resultado.success == true ) { 
                 gravaEnvioResultado(element.DANFE, resultado.message, 1)
-                sendLog('SUCESSO',`Envio TRACKING: ${element.DANFE} - Ret API: ${resultado.message} - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
+                sendLog('SUCESSO',`Envio TRACKING: ${element.DANFE} - DB ID: ${ element.ID} - idCargaPK: ${element.IDCARGA} - (${origem_msg})`)
             } else {
                 sendLog('ALERTA',`Envio TRACKING: ${element.DANFE} - (Sem retorno) - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
                 console.log('4-checkEnviaOcorrencias:',resposta)

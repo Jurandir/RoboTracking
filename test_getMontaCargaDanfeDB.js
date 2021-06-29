@@ -5,7 +5,7 @@ require('dotenv').config()
 const fs                   = require('fs')
 const getMontaCargaDanfeDB = require('./controllers/loads/getMontaCargaDanfeDB')
 
-let danfe = '28210604067040000101550010000702731161962117'
+let danfe = '35210601844555002711550500014457321919698708'
 
 getMontaCargaDanfeDB(danfe).then((ret)=>{
     

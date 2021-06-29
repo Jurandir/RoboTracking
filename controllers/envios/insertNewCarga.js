@@ -12,6 +12,7 @@ const insertNewCarga = async (danfe) => {
     let monta   = await getMontaCargaDanfeDB(danfe)
     let params  = monta.data[0]
     let ret     = await loadAPI(method,endpoint,server,params)
+    ret.send    = params
     return ret
 }
 module.exports = insertNewCarga

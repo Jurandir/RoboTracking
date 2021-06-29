@@ -7,7 +7,7 @@ const insertCargaNaAPI = async (danfe) => {
     let msg       = 'Insert via Robô.'
     let retorno = {
         success: false,
-        message: 'Retorno da API, não OK.',
+        message: `Retorno da API, não OK. , ${danfe}`,
         code: 0,
         idCargaPk: 0,
         danfe: danfe,
@@ -40,13 +40,16 @@ const insertCargaNaAPI = async (danfe) => {
             retorno.message = `(DANFE localizada na API) - idCargaPK: ${retorno.idCargaPk}, Danfe: ${danfe}, OK.`
             return retorno
           } else {
+            let retAPI = ret.dados.message
+            retorno.message = `(Insert CARGA) - Retorno da API: "${retAPI}" , ${danfe}`
+            // console.log('Não OK, "insertCargaNaAPI.js":',ret)
             return retorno
           }  
 
         }
     } else {
         retorno.data    = ret
-        retorno.message = `API Falhou, Retorno: ${ret.err} , URL: ${ret.url}, Danfe:${danfe}`
+        retorno.message = `API Falhou, Retorno: "${ret.err}" , URL: ${ret.url}, Danfe:${danfe} - insertCargaNaAPI.js`
         return retorno
     }
 }

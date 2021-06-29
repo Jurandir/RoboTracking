@@ -71,15 +71,15 @@ async function checkNovasEvidencias(token) {
                         msg               = resposta.err
                         resultado.message = resultado.message+', Err:'+resultado.code
                         gravaFechaEntrega(element.DANFE, 0 , resultado.message)
-                        sendLog('WARNING',`Registro de entrega - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success} - ERRO: ${err}`)    
+                        sendLog('WARNING',`Registro de entrega - Message: "${resultado.message}" - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Success: ${resultado.success} - ERRO: ${msg}`)    
                         sendDebug('[Registro de entrega]', ` idCargaPK: ${element.IDCARGA} - Resultado:`+JSON.stringify(resultado) )
                     }
                 } 
 
             } catch (err) {
                     isErr = true
-                    sendLog('ERRO',`UPD - EVIDÊNCIA - DOC: ${element.DOCUMENTO} - (${element.DANFE})` )
-                    console.log('checkNovasEvidencias - ERRO:',err)
+                    sendLog('ERRO',`UPD - EVIDÊNCIA (checkNovasEvidencias.js)- DOC: ${element.DOCUMENTO} - (${element.DANFE})` )
+                    console.log('(checkNovasEvidencias.js) - ERRO:',err)
             }    
              
         })

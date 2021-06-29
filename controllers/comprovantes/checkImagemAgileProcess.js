@@ -35,7 +35,7 @@ const checkImagemAgileProcess = async (documento) => {
                         base64Str.msg    = msg
                         base64Str.ok     = true
                         base64Str.imagem = base64Image
-                        sendLog('SUCESSO',`Imagem AgileProcess ${documento} : ${base64Str.msg}`)      
+                        sendLog('SUCESSO',`Imagem AgileProcess ${documento} : "${base64Str.msg}"`)      
                   } else {
                         base64Str.msg    = msg
                         base64Str.ok     = false

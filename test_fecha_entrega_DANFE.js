@@ -63,7 +63,7 @@ function grava_response(ret_api,element) {
         } else {
             resultado.message = resultado.message+', Err:'+resultado.code
             gravaFechaEntrega(element.DANFE, 0 , msg1 )
-            msg2 = `WARNING - Registro de entrega - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${resultado.message} - Success: ${resultado.success}`    
+            msg2 = `WARNING - Registro de entrega - Message: "${resultado.message}" - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Success: ${resultado.success}`    
         }
     } 
     console.log(msg2)

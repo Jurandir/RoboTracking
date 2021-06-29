@@ -69,7 +69,7 @@ async function checkNovosComprovantes(token) {
             } 
 
             if (evidencia.ok==false) {
-                sendLog('WARNING',`(EasyDocs,AgileProcess) DOC:${element.DOCUMENTO} - (Não achou a imagem solicitada)` )
+                sendLog('WARNING',`(EasyDocs,AgileProcess) DOC:${element.DOCUMENTO} - ("Não achou a imagem solicitada")` )
             } else
             if (evidencia.ok==true) {
                 ret.qtdeSucesso++
@@ -100,20 +100,23 @@ async function checkNovosComprovantes(token) {
 
                     if ( respostaBase64.success == true ) { 
                             let aviso = `${respostaBase64.data[0]}` || 'OK'
+                            let sucesso = 'SUCESSO'
 
                             if(aviso.length > 100) {
-                                aviso = '(Aviso "data[0]" > 100 bytes) - Problemas em base64.'
+                                sucesso                = 'WARNING'
+                                respostaBase64.success = false
+                                aviso                  = '(Aviso "data[0]" > 100 bytes) - Problemas em base64.'
                             } else if(aviso =='undefined') {
                                 aviso = 'OK'
                             }
 
                             respostaBase64.message = respostaBase64.message+', '+aviso
                             gravaEvidenciasSend_OK(element.DANFE, respostaBase64.code, origem)
-                            sendLog('SUCESSO',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${respostaBase64.message} - Success: ${respostaBase64.success}`)
+                            sendLog(sucesso,`Envio IMAGEM - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${respostaBase64.message} - Success: ${respostaBase64.success}`)
                     }  else {
                             respostaBase64.message = respostaBase64.message+', '+resultado.code
                             gravaEvidenciasSend_ERR(element.DANFE, respostaBase64.message , origem)
-                            sendLog('WARNING',`Envio IMAGEM - DANFE: ${element.DANFE} - API Carga: ${element.IDCARGA} - Message: ${respostaBase64.message} - Success: ${respostaBase64.success}`)
+                            sendLog('WARNING',`Envio IMAGEM - DANFE: ${element.DANFE} - idCargaPK: ${element.IDCARGA} - Message: ${respostaBase64.message} - Success: ${respostaBase64.success}`)
                             console.log('WARNING checkNovosComprovantes:',ret)
                     }  
 
@@ -121,8 +124,8 @@ async function checkNovosComprovantes(token) {
 
                 } catch (err) {
                     isErr = true
-                    sendLog('ERRO',`UPD - EVIDÊNCIA - DOC: ${element.DOCUMENTO} - (${element.DANFE})` )
-                    console.log('ERRO:',err)
+                    sendLog('ERRO',`UPD - EVIDÊNCIA (checkNovosComprovantes.js)- DOC: ${element.DOCUMENTO} - (${element.DANFE})` )
+                    console.log('(checkNovosComprovantes.js) ERRO:',err)
                 }    
             } 
         })

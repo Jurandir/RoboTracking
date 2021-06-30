@@ -24,7 +24,7 @@ const getCargaAPIitrack               = require('./controllers/loads/getCargaAPI
 const tokensValidos                   = require('./controllers/loads/tokensValidos')
 const sendLog                         = require('./helpers/sendLog')
 
-const check_time                 = process.env.CHECK_TIME      || 10000   // mseg 
+const check_time                 = process.env.CHECK_TIME      || 60000   // mseg 
 const time_evidencias            = process.env.TIME_EVIDENCIAS || 1800000 // mseg 
 const node_env                   = process.env.NODE_ENV        || 'Test'  // Production / Developer 
 
@@ -262,7 +262,7 @@ async function monitorarOcorrencias() {
       botGeraOcorrenciaChegadaFilDestino()        // 06: OCORRENCIA_BAIXA_CHEG_FIL_DESTINO.sql  &&  UPDATE_DATA_BAIXA_NF.sql
       botGeraOcorrenciasTMS()                     // 07: OCORRENCIAS_CARGAS.sql
       botCheckEnviaOcorrencias()                  // 08: OCORRENCIAS_PENDENTES.sql  &&  UPDATE_TRACKING.sql
-      setTimeout(botCheckNovasEvidencias,30000)   // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
-      setTimeout(botCheckNovosComprovantes,60000) // 10: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      setTimeout(botCheckNovasEvidencias,40000)   // 09: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
+      setTimeout(botCheckNovosComprovantes,80000) // 10: COMPROVANTES_PENDENTES.sql  &&  UPDATE_EVIDENCIA_NF.sql
       
 }

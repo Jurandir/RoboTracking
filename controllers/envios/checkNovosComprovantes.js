@@ -69,7 +69,8 @@ async function checkNovosComprovantes(token) {
             } 
 
             if (evidencia.ok==false) {
-                sendLog('WARNING',`(EasyDocs,AgileProcess) DOC:${element.DOCUMENTO} - ("Não achou a imagem solicitada")` )
+                gravaEvidenciasLoad_OK(element.DANFE,'NOTFOUND')
+                sendLog('NOTFOUND',`(EasyDocs,AgileProcess) DOC:${element.DOCUMENTO} - ("Não achou a imagem solicitada")` )
             } else
             if (evidencia.ok==true) {
                 ret.qtdeSucesso++

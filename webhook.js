@@ -1,6 +1,7 @@
 //-- Versão Atual em ( 03/02/2021 ) 
 //-- By: Jurandir Ferreira
-const colors = require('colors')
+const colors       = require('colors')
+const INSERT_CARGA = false
 
 require('dotenv').config()
 
@@ -22,13 +23,14 @@ const geraOcorrenciasTMS              = require('./controllers/eventos/geraOcorr
 const getNFsNaoValidadas              = require('./controllers/loads/getNFsNaoValidadas')
 const getCargaAPIitrack               = require('./controllers/loads/getCargaAPIitrack')
 const tokensValidos                   = require('./controllers/loads/tokensValidos')
+const get_idCargaPK_DANFE               = require('./controllers/loads/get_idCargaPK_DANFE')
 const sendLog                         = require('./helpers/sendLog')
 
 const check_time                 = process.env.CHECK_TIME      || 60000   // mseg 
 const time_evidencias            = process.env.TIME_EVIDENCIAS || 1800000 // mseg 
 const node_env                   = process.env.NODE_ENV        || 'Test'  // Production / Developer 
 
-sendLog('MSG','Startup serviço')
+sendLog('MSG','Startup serviço - Upd. 02/07/2021')
 
 let sucesso                              = false
 let id                                   = 0
@@ -236,12 +238,21 @@ async function botGetNFsNaoValidadas() {
       }              
       notas.map((nota)=>{      
          let danfe     = nota.DANFE
-         insertCargaNaAPI(danfe).then(ret=>{
-            let aviso = ret.success && ret.update ? 'SUCESSO' : 'AVISO'
-            sendLog(aviso, ret.message)
-         }).catch(err=>{
-            sendLog('WARNING',`(Validação Falhou) - Não OK - DANFE: ${danfe}, Mensagem: ${err}`)
-         })
+         if(INSERT_CARGA){
+            insertCargaNaAPI(danfe).then(ret=>{
+               let aviso = ret.success && ret.update ? 'SUCESSO' : 'AVISO'
+               sendLog(aviso, ret.message)
+            }).catch(err=>{
+               sendLog('WARNING',`Insert - (Validação Falhou) - DANFE: ${danfe}, Mensagem: ${err}`)
+            })
+         } else {
+            get_idCargaPK_DANFE(danfe).then(ret=>{
+               let aviso = ret.success && ret.update ? 'SUCESSO' : 'AVISO'
+               sendLog(aviso, `"DANFE: ${danfe}",  Sucesso API: ${ret.success}`)
+            }).catch(err=>{
+               sendLog('WARNING',`Pesquisa idCargaPK - Falhou - DANFE: ${danfe}, Mensagem: ${err}`)
+            })
+         }
       })
 
    })

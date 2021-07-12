@@ -14,10 +14,10 @@ async function getMontaCargaDanfeDB(danfe) {
     let sql = eval('`'+sqlCarga+'`');
     try {
         let data     = await sqlQuery(sql)
-        let newobj   = dataSetToJson( data )
-        let { Erro } = data
-        
+        let { Erro } = data       
         if (Erro) { throw new Error(`DB ERRO: ( ${Erro} )`) }
+
+        let newobj   = dataSetToJson( data )
         
         dados.rows    = data.length   
         dados.success = ( data.length > 0 )

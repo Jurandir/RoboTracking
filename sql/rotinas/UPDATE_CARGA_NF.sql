@@ -1,5 +1,9 @@
-UPDATE NOTAFISCAL
-SET DT_VALIDACAO = CURRENT_TIMESTAMP,
-    IDCARGA = ${idcarga},
-    DANFE_API = '${danfe_api}'
+UPDATE NF
+SET NF.DT_VALIDACAO = (CASE WHEN NF.DT_VALIDACAO IS NULL THEN CURRENT_TIMESTAMP 
+                        WHEN ${idcarga} > 0 THEN CURRENT_TIMESTAMP
+						ELSE NF.DT_VALIDACAO END ),
+    DT_UPDATE    = CURRENT_TIMESTAMP,                    
+    NF.IDCARGA   = ${idcarga},
+    NF.DANFE_API = '${danfe_api}'
+FROM NOTAFISCAL NF
 WHERE DANFE = '${danfe}'

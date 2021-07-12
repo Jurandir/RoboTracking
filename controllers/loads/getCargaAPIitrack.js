@@ -11,7 +11,7 @@ const getCargaAPIitrack = async (token,danfe) => {
         danfe: danfe,
     }
 
-    console.log('server:',server)
+    // console.log('server:',server)
     
     return await loadAPI(method,endpoint,server,params)
 

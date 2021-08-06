@@ -49,9 +49,10 @@ async function verDanfe () {
 
 async function retransmite(danfe,idCarga) {
     let xsql = idCarga ? `,IDCARGA = ${idCarga}` : ''
+    let ysql = idCarga ? `,,DT_VALIDACAO = CURRENT_TIMESTAMP` : ''
     let sql = `UPDATE NOTAFISCAL
                 SET DT_ATUAL = CURRENT_TIMESTAMP
-                    ,DT_VALIDACAO = NULL
+                    ${ysql}
                     ,DANFE_API    = 'Re-Envio Habilitado.'
                     ,DT_UPDATE    = NULL
                     ${xsql}
@@ -66,7 +67,7 @@ async function retransmite(danfe,idCarga) {
 async function reinsert(danfe,idCarga) {
     let sql = `
             INSERT INTO SIC.dbo.NOTAFISCAL ( IDCARGA, DANFE_API, DANFE, DOCUMENTO, CNPJ_EMITENTE, NUMERO , CNPJ_DESTINATARIO,DT_ATUAL, CNPJ_TRANSPORTADOR  )
-            SELECT
+            SELECT TOP 1
                 ${idCarga}                                                as IDCARGA,
                 'Re-Insert'                                               as DANFE_API,
                 NFR.CHAVENFE                                              as DANFE,
@@ -98,6 +99,7 @@ async function reinsert(danfe,idCarga) {
             AND CNH.TIPO='C'
             AND CNH.STATUS = 'I'
             AND NFR.CHAVENFE = '${danfe}'
+            ORDER BY CNH.TIPOCTRC
     `
     ret = await sqlExec(sql)
     console.log(`id: ${idCarga}, UPD:`,ret)

@@ -91,6 +91,9 @@ const checkEnviaOcorrencias = async (id,token) => {
                 console.log('1-checkEnviaOcorrencias:',resposta)
             } else if ( resultado.success == false ) { 
                 origem_msg = resposta.err || 'checkEnviaOcorrencias.js'
+                if(resposta.err) {
+                    resultado.message = 'Erro: ' + resposta.err
+                }
                 gravaEnvioResultado(element.DANFE, resultado.message, 0)
                 sendLog('WARNING',`Envio TRACKING: - Ret API: "${resultado.message}" -${element.DANFE} - ID:${ element.ID} - API Carga: ${element.IDCARGA} (${origem_msg})`)
             } else if ( resultado.success == true ) { 

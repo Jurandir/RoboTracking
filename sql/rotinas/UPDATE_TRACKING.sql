@@ -5,3 +5,4 @@ SET DT_ENVIO      = CURRENT_TIMESTAMP,
 	RET_PROTOCOLO = '${params.protocolo}',
 	RET_SUCESSO   = '${params.sucesso}'
 WHERE DANFE       = '${params.danfe}'
+AND ( RET_SUCESSO IS NULL OR RET_SUCESSO   = 0 )

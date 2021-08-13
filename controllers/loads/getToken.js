@@ -2,7 +2,7 @@ const login        = require('../../models/login')
 const loadAPI      = require('../../services/loadAPI')
 
 const url_teste    = process.env.URL_TESTE    || 'http://beta.martinlabs.com.br/iTrackServer-1.0-SNAPSHOT/ws'
-const utl_producao = process.env.URL_PRODUCAO || 'https://www.itrackbrasil.com.br/ws'
+const utl_producao = process.env.URL_PRODUCAO || 'https://integracao.itrackbrasil.com.br/ws' // 'https://www.itrackbrasil.com.br/ws'
 const ambiente     = process.env.URL_PRODUCAO || 'Test'
 
 const getToken = async (cnpj,pwd) => {
